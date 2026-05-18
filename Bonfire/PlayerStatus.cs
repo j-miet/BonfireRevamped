@@ -23,8 +23,8 @@ namespace Bonfire
         public int Respec = 1;
         public int FreeLevels = 0;
         public int GeoLevels = 0;
-        public int RL3Levels = 0;
-        public int RL4Levels = 0;
+        public int RL3Levels = 0; // free levels from King's Idols
+        public int RL4Levels = 0; // free levels from Arcane Eggs
         public int TotalFreeLevels = 0;
         public int RelicLevels = 0;
         public int SpentFreeLevels = 0;
