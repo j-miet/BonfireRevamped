@@ -1,16 +1,16 @@
-# Hollow Knight Bonfire Mod
+# Hollow Knight Bonfire mod
 
-A level-up system in Hollow Knight 1.5 for a more realistic Dark Souls experience (a well-known Hollow Knight ripoff).
+This a fork of [TheodoreChristianRadu](https://github.com/TheodoreChristianRadu/Bonfire)'s repository which itself is a fork of [original BonfireMod by ricardosouzag](https://github.com/ricardosouzag/BonfireMod).
 
-![](https://github.com/TheodoreChristianRadu/Bonfire/blob/master/Resources/Bonfy.gif)
+## What is it
 
-## Installation Instructions
+Bonfire mod adds a geo-based leveling system to Hollow Knight. This replicates the idea from Dark Souls games where souls work both as currency and experience points for leveling. 
 
-*Mod only compatible with Hollow Knight 1.5*
+This way player can choose between raw stats/utility and usual upgrades/items. It also keeps geo useful even in the end game: improve character power instead of hoarding it for nothing/buying the unbreakable charms.
 
-**Now available on Lumafly and Scarab!**
+While leveling certainly makes game easier, it offer some refreshing variety to standard gameplay.
 
-Manual installation:
-+ First, install the [modding API](https://github.com/hk-modding/api)
-+ Then, download the [latest release](https://github.com/TheodoreChristianRadu/Bonfire/releases/latest) of the mod
-+ Finally, extract `Bonfire.zip` into a `Bonfire` folder containing `Bonfire.dll` and `Bonfire.pdb` and move it to `Hollow Knight/Hollow Knight_Data/Managed/Mods` to install the mod
+
+## Changes
+
+-- TODO --

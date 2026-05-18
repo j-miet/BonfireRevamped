@@ -1,9 +1,8 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonfire", "Bonfire.csproj", "{9437C7B5-D0F0-4FA2-8A5B-E6D38F2E6BED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BonfireRevamped", "Bonfire/Bonfire.csproj", "{9437C7B5-D0F0-4FA2-8A5B-E6D38F2E6BED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
