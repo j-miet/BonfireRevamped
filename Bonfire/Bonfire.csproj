@@ -35,6 +35,7 @@
       <HintPath>$(HollowKnightRefs)\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <!-- is this needed anymore after the removal of bench bonfire visuals? -->
     <Reference Include="UnityEngine.ImageConversionModule">
       <HintPath>$(HollowKnightRefs)\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
@@ -55,42 +56,6 @@
       <HintPath>$(HollowKnightRefs)\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-  </ItemGroup>
-
-  <!-- Sprite animation frames embedded in the DLL -->
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Bonfy\0.png" />
-    <EmbeddedResource Include="Resources\Bonfy\1.png" />
-    <EmbeddedResource Include="Resources\Bonfy\2.png" />
-    <EmbeddedResource Include="Resources\Bonfy\3.png" />
-    <EmbeddedResource Include="Resources\Bonfy\4.png" />
-    <EmbeddedResource Include="Resources\Bonfy\5.png" />
-    <EmbeddedResource Include="Resources\Bonfy\6.png" />
-    <EmbeddedResource Include="Resources\Bonfy\7.png" />
-    <EmbeddedResource Include="Resources\Bonfy\8.png" />
-    <EmbeddedResource Include="Resources\Bonfy\9.png" />
-    <EmbeddedResource Include="Resources\Bonfy\10.png" />
-    <EmbeddedResource Include="Resources\Bonfy\11.png" />
-    <EmbeddedResource Include="Resources\Bonfy\12.png" />
-    <EmbeddedResource Include="Resources\Bonfy\13.png" />
-    <EmbeddedResource Include="Resources\Bonfy\14.png" />
-    <EmbeddedResource Include="Resources\Bonfy\15.png" />
-    <EmbeddedResource Include="Resources\Bonfy\16.png" />
-    <EmbeddedResource Include="Resources\Bonfy\17.png" />
-    <EmbeddedResource Include="Resources\Bonfy\18.png" />
-    <EmbeddedResource Include="Resources\Bonfy\19.png" />
-    <EmbeddedResource Include="Resources\Bonfy\20.png" />
-    <EmbeddedResource Include="Resources\Bonfy\21.png" />
-    <EmbeddedResource Include="Resources\Bonfy\22.png" />
-    <EmbeddedResource Include="Resources\Bonfy\23.png" />
-    <EmbeddedResource Include="Resources\Bonfy\24.png" />
-    <EmbeddedResource Include="Resources\Bonfy\25.png" />
-    <EmbeddedResource Include="Resources\Bonfy\26.png" />
-    <EmbeddedResource Include="Resources\Bonfy\27.png" />
-    <EmbeddedResource Include="Resources\Bonfy\28.png" />
-    <EmbeddedResource Include="Resources\Bonfy\29.png" />
-    <EmbeddedResource Include="Resources\Hive\Idle.png" />
-    <EmbeddedResource Include="Resources\Hive\Cracked.png" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

@@ -22,8 +22,6 @@ namespace Bonfire
             Instance = this;
             Instance.LogDebug("Bonfire Mod initializing!");
 
-            BonfyBench.Load();
-
             ModHooks.NewGameHook += SetupGameRefs;
             ModHooks.SavegameLoadHook += SetupGameRefs;
             ModHooks.CharmUpdateHook += BenchApply;
@@ -117,8 +115,6 @@ namespace Bonfire
 
         private void SceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
-            BonfyBench.Replace(arg0);
-
             if (pd == null && PlayerData.instance != null)
                 pd = PlayerData.instance;
 
@@ -139,7 +135,7 @@ namespace Bonfire
             return ret;
         }
 
-        
+
 
         public int ResShield(int hazardType, int damage)
         {
@@ -215,7 +211,7 @@ namespace Bonfire
         public float FocusCost() => (float)ls.FocusCost(Status.IntelligenceStat) / 33f;
 
         public int BlueHPRestored() => ls.ExtraMasks(Status.ResilienceStat);
-        
+
         public void MpRegen()
         {
             if (HeroController.instance != null && PlayerData.instance != null)
@@ -285,9 +281,9 @@ namespace Bonfire
             Status.LuckStat = 1;
             LogDebug("Set up new player data.");
         }
-        
 
-        public override string GetVersion() => "3.0.1";
+
+        public override string GetVersion() => "4.0.0";
         public int HitsSinceShielded { get; set; } = 0;
         public int Dreamers;
         public bool Crit { get; set; } = false;
