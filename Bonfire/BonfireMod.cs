@@ -150,7 +150,7 @@ namespace Bonfire
 
         // for enemy hp bars
         private readonly Dictionary<HealthManager, float> enemyMaxHp = new Dictionary<HealthManager, float>();
-        private Dictionary<HealthManager, bool> enemyIsBoss = new Dictionary<HealthManager, bool>();
+        private readonly Dictionary<HealthManager, bool> enemyIsBoss = new Dictionary<HealthManager, bool>();
 
         private static Texture2D SolidTex()
         {

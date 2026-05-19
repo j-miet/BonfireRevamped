@@ -54,7 +54,7 @@ namespace Bonfire
                 }
             }
 
-            if (HeroController.instance.cState.nearBench && !GameManager.instance.isPaused)
+            if (PlayerData.instance.atBench && !GameManager.instance.isPaused)
             {
                 GUI.enabled = true;
 
