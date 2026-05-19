@@ -33,9 +33,8 @@ namespace Bonfire
         public int TotalSpentGeo = 0;
         public int SpentGeoLevels = 0;
 
-        public bool VoidHeartSoulRegenEnabled = true;
+        public bool VoidHeartSoulRegenEnabled = false;
         public float VoidHeartSoulRegenMultiplier = 1f;
-        public bool VoidHeartSmoothRegen = false;
         public float VoidHeartSoulBuffer = 0f;
 
         public bool EnemyHealthBarsEnabled = true;

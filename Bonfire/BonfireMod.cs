@@ -57,8 +57,6 @@ namespace Bonfire
             GUI.backgroundColor = Color.white;
             Status.VoidHeartSoulRegenEnabled = GUILayout.Toggle(Status.VoidHeartSoulRegenEnabled, "Enabled");
 
-            Status.VoidHeartSmoothRegen = GUILayout.Toggle(Status.VoidHeartSmoothRegen, "Smooth Regen");
-
             GUILayout.BeginHorizontal();
 
             GUILayout.Label("Multiplier: " + Status.VoidHeartSoulRegenMultiplier.ToString("0.0"));
@@ -195,7 +193,7 @@ namespace Bonfire
                 HeroController.instance.cState != null &&
                 GameManager.instance != null)
             {
-                Cursor.visible = HeroController.instance.cState.nearBench || GameManager.instance.isPaused;
+                Cursor.visible = PlayerData.instance.atBench || GameManager.instance.isPaused;
                 return;
             }
 
@@ -367,17 +365,24 @@ namespace Bonfire
             {
                 float dt = Time.deltaTime;
 
-                float baseRegen = 1.5f;
-
-                float regenPerSecond = baseRegen;
+                if (manaRegenTime > 0)
+                {
+                    manaRegenTime -= dt;
+                }
+                else
+                {
+                    LogDebug($@"Recovering MP!");
+                    manaRegenTime = 1.11f;
+                    HeroController.instance.AddMPChargeSpa(ls.SoulRegen(Status.WisdomStat));
+                }
 
                 if (Status.VoidHeartSoulRegenEnabled && HasVoidHeart())
                 {
-                    regenPerSecond *= Status.VoidHeartSoulRegenMultiplier;
-                }
+                    float baseRegen = 1.5f;
+                    float regenPerSecond = baseRegen;
 
-                if (Status.VoidHeartSmoothRegen)
-                {
+                    regenPerSecond *= Status.VoidHeartSoulRegenMultiplier;
+
                     Status.VoidHeartSoulBuffer += regenPerSecond * dt;
 
                     int toGive = Mathf.FloorToInt(Status.VoidHeartSoulBuffer);
@@ -386,16 +391,6 @@ namespace Bonfire
                     {
                         HeroController.instance.AddMPChargeSpa(toGive);
                         Status.VoidHeartSoulBuffer -= toGive;
-                    }
-                }
-                else
-                {
-                    manaRegenTime -= dt;
-
-                    if (manaRegenTime <= 0f)
-                    {
-                        manaRegenTime = 1f;
-                        HeroController.instance.AddMPChargeSpa(Mathf.RoundToInt(regenPerSecond));
                     }
                 }
             }
