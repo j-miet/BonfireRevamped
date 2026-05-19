@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 
 using HutongGames.PlayMaker;
 using Modding;
@@ -13,13 +14,9 @@ namespace Bonfire
         public void OnLoadLocal(PlayerStatus s) => Status = s;
         public PlayerStatus OnSaveLocal() => Status;
 
-        public override string GetVersion() => "4.0.0";
+        public override string GetVersion() => "4.0.0"; // keep incrementing the original mod version
         public int HitsSinceShielded { get; set; } = 0;
-        public int Dreamers;
         public bool Crit { get; set; } = false;
-        public int critRoll;
-        public float manaRegenTime;
-        public LevellingSystem ls;
 
         public static BonfireMod Instance;
         public static GameManager gm;
@@ -34,7 +31,6 @@ namespace Bonfire
             ModHooks.SavegameLoadHook += SetupGameRefs;
             ModHooks.CharmUpdateHook += BenchApply;
             ModHooks.SoulGainHook += SoulGain;
-            ModHooks.HeroUpdateHook += MpRegen;
             On.PlayerData.UpdateBlueHealth += UpdateBlueHealth;
             ModHooks.FocusCostHook += FocusCost;
             ModHooks.SlashHitHook += CritHit;
@@ -45,32 +41,151 @@ namespace Bonfire
             ModHooks.OnEnableEnemyHook += OnEnableEnemy;
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
 
-            Instance.LogDebug("Bonfire Mod v." + GetVersion() + " initialized!");
+            Instance.LogDebug("BonfireRevamped v." + GetVersion() + " initialized!");
         }
 
-        // unused, for debugging
-        public void SetupNewModData()
+        // Ui methods are currently tied to LevellingSystem.OnGUI call and should be only called there
+
+        /// <summary>
+        /// Create UI component for void heart soul regen controls
+        /// </summary>
+        public void CreateVoidHeartSettingsUI()
         {
-            Status.CurrentLv = 1;
-            Status.StrengthIncrease = 0;
-            Status.DexterityIncrease = 0;
-            Status.IntelligenceIncrease = 0;
-            Status.ResilienceIncrease = 0;
-            Status.WisdomIncrease = 0;
-            Status.LuckIncrease = 0;
-            Status.SpentGeo = 0;
-            Status.TotalSpentGeo = 0;
-            Status.Respec = 1;
-            Status.GeoLevels = 0;
-            Status.TotalGeoLevels = 1;
-            Status.SpentGeoLevels = 0;
-            Status.StrengthStat = 1;
-            Status.DexterityStat = 1;
-            Status.IntelligenceStat = 1;
-            Status.ResilienceStat = 1;
-            Status.WisdomStat = 1;
-            Status.LuckStat = 1;
-            LogDebug("Set up new player data.");
+            GUILayout.BeginVertical("box");
+            GUILayout.Label("Void Heart Soul Regen");
+
+            GUI.backgroundColor = Color.white;
+            Status.VoidHeartSoulRegenEnabled = GUILayout.Toggle(Status.VoidHeartSoulRegenEnabled, "Enabled");
+
+            Status.VoidHeartSmoothRegen = GUILayout.Toggle(Status.VoidHeartSmoothRegen, "Smooth Regen");
+
+            GUILayout.BeginHorizontal();
+
+            GUILayout.Label("Multiplier: " + Status.VoidHeartSoulRegenMultiplier.ToString("0.0"));
+
+            GUI.backgroundColor = Color.red;
+            if (GUILayout.Button("-"))
+                Status.VoidHeartSoulRegenMultiplier = Mathf.Max(0f, Status.VoidHeartSoulRegenMultiplier - 0.1f);
+
+            GUI.backgroundColor = Color.green;
+            if (GUILayout.Button("+"))
+                Status.VoidHeartSoulRegenMultiplier += 0.1f;
+
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+        }
+
+        /// <summary>
+        /// Create UI component toggle button to enable/disable enemy hp bars
+        /// </summary>
+        public void CreateEnemyHPToggleUI()
+        {
+            GUILayout.BeginVertical("box");
+
+            GUI.backgroundColor = Color.white;
+            Instance.Status.EnemyHealthBarsEnabled =
+                GUILayout.Toggle(
+                    Instance.Status.EnemyHealthBarsEnabled,
+                    "Enemy Health Bars"
+                );
+
+            GUILayout.EndVertical();
+        }
+
+        /// <summary>
+        /// Create health bars from each stored enemy HealthManager object
+        /// </summary>
+        public void DrawEnemyHealthBars()
+        {
+            if (!Status.EnemyHealthBarsEnabled) return;
+
+            foreach (var kvp in enemyMaxHp)
+            {
+                HealthManager hm = kvp.Key;
+                if (hm == null) continue;
+
+                Vector3 screenPos = Camera.main.WorldToScreenPoint(hm.transform.position);
+                if (screenPos.z < 0) continue;
+
+                float maxHp = kvp.Value;
+                float currentHp = hm.hp;
+                bool isBoss = enemyIsBoss.TryGetValue(hm, out bool b) && b;
+
+                if (currentHp == maxHp && !isBoss) return; // if full hp, don't display bar for default enemies
+
+                float pct = Mathf.Clamp01(currentHp / maxHp);
+
+                float width = isBoss ? 300f : 120f;
+                float height = isBoss ? 20f : 10f;
+
+                float x = screenPos.x - width / 2f;
+                float y = Screen.height - screenPos.y - 20f;
+
+                Rect bg = new Rect(x, y, width, height);
+                Rect fill = new Rect(x, y, width * pct, height);
+
+                DrawRect(bg, new Color(0f, 0f, 0f, 0.7f));
+
+                Color fillColor = isBoss ? new Color(1f, 0.5f, 0f) : Color.red;
+                // for progressive color changes based on enemy hp e.g. green -> yellow -> red
+                /*
+                Color fillColor =
+                    pct > 0.6f ? Color.green :
+                    pct > 0.3f ? Color.yellow :
+                                 Color.red;
+                */
+
+                DrawRect(fill, fillColor);
+
+                GUI.color = Color.white;
+            }
+        }
+
+
+        private int Dreamers; // can remove this + SceneLoaded unless some other dreamer-reliant system get added
+        private int critRoll;
+        private float manaRegenTime;
+        private LevellingSystem ls;
+        private static Texture2D _tex;
+
+        // for enemy hp bars
+        private readonly Dictionary<HealthManager, float> enemyMaxHp = new Dictionary<HealthManager, float>();
+        private Dictionary<HealthManager, bool> enemyIsBoss = new Dictionary<HealthManager, bool>();
+
+        private static Texture2D SolidTex()
+        {
+            if (_tex == null)
+            {
+                _tex = new Texture2D(1, 1);
+                _tex.SetPixel(0, 0, Color.white);
+                _tex.Apply();
+            }
+            return _tex;
+        }
+
+        private void DrawRect(Rect rect, Color color)
+        {
+            GUI.color = color;
+            GUI.DrawTexture(rect, SolidTex());
+        }
+
+        // add health bars for enemies
+        private bool OnEnableEnemy(GameObject enemy, bool isAlreadyDead)
+        {
+            HealthManager hm = enemy.GetComponent<HealthManager>();
+
+
+            if (hm != null && !enemyMaxHp.ContainsKey(hm))
+            {
+                enemyMaxHp.Add(hm, hm.hp);
+                enemyIsBoss.Add(hm, BossSceneController.Instance != null);
+            }
+
+            hm.SetGeoSmall(ls.IncreaseGeo(GetGeo("small", hm), Status.LuckStat));
+            hm.SetGeoMedium(ls.IncreaseGeo(GetGeo("medium", hm), Status.LuckStat));
+            hm.SetGeoLarge(ls.IncreaseGeo(GetGeo("large", hm), Status.LuckStat));
+
+            return isAlreadyDead;
         }
 
         // custom cursor display function to allow cursor use in leveling menu near benches
@@ -176,28 +291,6 @@ namespace Bonfire
         // Get focus cost multiplier
         private float FocusCost() => (float)ls.FocusCost(Status.IntelligenceStat) / 33f;
 
-        // Passive soul regen based on current wisdow stat
-        private void MpRegen()
-        {
-            if (HeroController.instance != null && PlayerData.instance != null)
-            {
-                try
-                {
-                    if (manaRegenTime > 0)
-                    {
-                        manaRegenTime -= Time.deltaTime;
-                    }
-                    else
-                    {
-                        LogDebug($@"Recovering MP!");
-                        manaRegenTime = 1.11f;
-                        HeroController.instance.AddMPChargeSpa(ls.SoulRegen(Status.WisdomStat));
-                    }
-                }
-                catch { }
-            }
-        }
-
         // Get soul gain per nail hit based on current wisdow stat
         private int SoulGain(int num) => ls.ExtraSoul(Status.WisdomStat, num);
 
@@ -231,30 +324,6 @@ namespace Bonfire
             return ret;
         }
 
-        // updates enemy geo drops based on luck stat
-        // also in the original version applied an undocumented hp scaling to all enemies
-        private bool OnEnableEnemy(GameObject enemy, bool isAlreadyDead)
-        {
-            HealthManager hm = enemy.GetComponent<HealthManager>();
-
-            // this was the old hp scaling system. 
-            // keep it commented out for reference in case an optional enemy hp scaling is added later
-            /*
-            if (hm != null && hm.hp < 5000 && !isAlreadyDead)
-            {
-                LogDebug($@"Vanilla HP for {enemy.name} = {hm.hp}");
-                hm.hp *= (int)((1.25 + (double)Dreamers / 3) * (2.5 / (1.0 + System.Math.Exp(-0.05 * Status.CurrentLv))));
-                LogDebug($@"Bonfire HP for {enemy.name} = {hm.hp}");
-            }
-            */
-
-            hm.SetGeoSmall(ls.IncreaseGeo(GetGeo("small", hm), Status.LuckStat));
-            hm.SetGeoMedium(ls.IncreaseGeo(GetGeo("medium", hm), Status.LuckStat));
-            hm.SetGeoLarge(ls.IncreaseGeo(GetGeo("large", hm), Status.LuckStat));
-
-            return isAlreadyDead;
-        }
-
         // handles critical hit visual
         private void CritHit(Collider2D otherCollider, GameObject go)
         {
@@ -271,11 +340,66 @@ namespace Bonfire
             }
         }
 
-        // critical hit random roll
+        // checks if player has obtained the void heart
+        private bool HasVoidHeart()
+        {
+            return PlayerData.instance != null && PlayerData.instance.GetBool("equippedCharm_36");
+        }
+
+        // called when hero (= player character) gets updated
         private void HeroUpdate()
         {
+            foreach (var e in enemyMaxHp.Keys) // actively track hp bars for removal
+            {
+                if (e == null || e.hp <= 0)
+                    enemyMaxHp.Remove(e);
+            }
+
+            // crit chance roll
             if (GameManager.instance.inputHandler.inputActions.attack.WasPressed)
                 critRoll = Random.Range(1, 100);
+
+            if (HeroController.instance == null || PlayerData.instance == null)
+                return;
+
+            // passive soul regen from wisdom stat and optionally from void heart
+            try
+            {
+                float dt = Time.deltaTime;
+
+                float baseRegen = 1.5f;
+
+                float regenPerSecond = baseRegen;
+
+                if (Status.VoidHeartSoulRegenEnabled && HasVoidHeart())
+                {
+                    regenPerSecond *= Status.VoidHeartSoulRegenMultiplier;
+                }
+
+                if (Status.VoidHeartSmoothRegen)
+                {
+                    Status.VoidHeartSoulBuffer += regenPerSecond * dt;
+
+                    int toGive = Mathf.FloorToInt(Status.VoidHeartSoulBuffer);
+
+                    if (toGive > 0)
+                    {
+                        HeroController.instance.AddMPChargeSpa(toGive);
+                        Status.VoidHeartSoulBuffer -= toGive;
+                    }
+                }
+                else
+                {
+                    manaRegenTime -= dt;
+
+                    if (manaRegenTime <= 0f)
+                    {
+                        manaRegenTime = 1f;
+                        HeroController.instance.AddMPChargeSpa(Mathf.RoundToInt(regenPerSecond));
+                    }
+                }
+            }
+            catch { }
         }
 
         // custom damage function

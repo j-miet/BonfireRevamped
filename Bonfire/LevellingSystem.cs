@@ -10,16 +10,6 @@ namespace Bonfire
     {
         public static LevellingSystem _instance;
         public PlayerData PlayerData;
-        public GameManager GameManager;
-        public bool levellingUp;
-        public HeroController HeroController;
-        public PlayMakerFSM PlayMakerFSM;
-        public Font trajanBold;
-        public Font trajanNormal;
-        public bool gotFreeLevel;
-        public int freeLevelsSpent;
-        public int geoToLvUp;
-        public GameObject inventory;
 
         public LevellingSystem() { }
 
@@ -68,6 +58,7 @@ namespace Bonfire
             {
                 GUI.enabled = true;
 
+                // leveling system ui
                 if (labelStyle == null)
                 {
                     labelStyle = new GUIStyle(GUI.skin.label)
@@ -226,11 +217,13 @@ namespace Bonfire
                     applyText = BonfireMod.Instance.Status.RL3Levels + " Free Levels!\n(King's Idol)";
                 }
 
-                GUILayout.BeginArea(new Rect(20f, (float)(Screen.height / 4), 530f, 500f));
+                // layout creation begins here
+                GUILayout.BeginArea(new Rect(20f, Screen.height / 4.0f, 530f, 700f));
                 GUILayout.Label("Level Up", labelStyle);
 
                 GUILayout.BeginHorizontal("box");
                 GUILayout.BeginVertical("box");
+
                 if (
                     GUILayout.Button(
                         new GUIContent("Strength: " + totalStr),
@@ -300,8 +293,8 @@ namespace Bonfire
                 {
                     IncreaseStat("Luck");
                 }
-
                 GUILayout.EndVertical();
+
                 GUILayout.BeginVertical("box");
                 GUILayout.Label(
                     new GUIContent("Nail Damage: " + nailDamage),
@@ -339,8 +332,8 @@ namespace Bonfire
                     GUILayout.Height(40f),
                     GUILayout.Width(160f)
                 );
-
                 GUILayout.EndVertical();
+
                 GUILayout.BeginVertical("box");
                 GUILayout.Label(new GUIContent(""), labelStyle, GUILayout.Height(40f), GUILayout.Width(160f));
                 GUILayout.Label(
@@ -373,14 +366,15 @@ namespace Bonfire
                     GUILayout.Height(40f),
                     GUILayout.Width(160f)
                 );
-
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
+
                 GUILayout.Label(
                     new GUIContent("Current Level: " + BonfireMod.Instance.Status.CurrentLv.ToString()),
                     labelStyle
                 );
                 GUILayout.Label(new GUIContent("Geo to Level Up: " + geoToLevelUp), labelStyle);
+
                 GUILayout.BeginHorizontal("box");
 
                 GUI.backgroundColor = Color.green;
@@ -418,18 +412,21 @@ namespace Bonfire
                     BonfireMod.Instance.Status.LuckIncrease = 0;
                     BonfireMod.Instance.Status.RL3Levels = PlayerData.instance.trinket3;
                     BonfireMod.Instance.Status.RL4Levels = PlayerData.instance.trinket4;
-                    BonfireMod.Instance.Status.FreeLevels = BonfireMod.Instance.Status.RL3Levels + BonfireMod.Instance.Status.RL4Levels;
+                    BonfireMod.Instance.Status.FreeLevels =
+                        BonfireMod.Instance.Status.RL3Levels
+                        + BonfireMod.Instance.Status.RL4Levels;
                     BonfireMod.Instance.Status.SpentFreeLevels = 0;
                     BonfireMod.Instance.Status.SpentGeoLevels = 0;
                 }
-
                 GUILayout.EndHorizontal();
+
                 GUILayout.BeginHorizontal("box");
                 GUILayout.FlexibleSpace();
                 GUI.backgroundColor = Color.red;
                 if (
                     GUILayout.Button(
-                        new GUIContent("Respec (" + BonfireMod.Instance.Status.Respec.ToString() + "  Rancid Egg)"), buttonStyle,
+                        new GUIContent("Respec (" + BonfireMod.Instance.Status.Respec.ToString() + "  Rancid Egg)"),
+                        buttonStyle,
                         GUILayout.Height(40f),
                         GUILayout.Width(522f)
                         )
@@ -442,8 +439,15 @@ namespace Bonfire
 
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
+
+                // ui extensions
+                BonfireMod.Instance.CreateVoidHeartSettingsUI();
+                BonfireMod.Instance.CreateEnemyHPToggleUI();
+
                 GUILayout.EndArea();
             }
+
+            BonfireMod.Instance.DrawEnemyHealthBars();  // call this outside of bench check
 
             if (!HeroController.instance.cState.nearBench)
             {
@@ -501,6 +505,10 @@ namespace Bonfire
         // immunity frames based on resilience stat
         public float IFrames(int totalRes) => (float)(3.25 / (1.0 + 2.4 * Math.Exp(-0.07 * (totalRes - 1))));
 
+
+        private Font trajanBold;
+        private Font trajanNormal;
+        private bool gotFreeLevel;
         private static GUIStyle labelStyle;
         private static GUIStyle buttonStyle;
 
