@@ -9,8 +9,8 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <!-- set this back to C:\Program Files (x86)\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed
-    after testing -->
+    <!-- copied from C:\Program Files (x86)\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed
+     + applied modding API files -->
     <HollowKnightRefs>..\Managed</HollowKnightRefs>
   </PropertyGroup>
 
