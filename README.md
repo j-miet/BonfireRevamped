@@ -14,12 +14,7 @@ end game: improve character power instead of saving up and spending it on unbrea
 While leveling certainly makes game easier, it can offer some refreshing variety to standard gameplay.
 
 
-## Changes
-
-- Mod version continues internally from fork (3.0.1 -> 4.x.y) but releases use their own system. That's why Github version has format 1.x.y.
-
-
-#### Following changes have been made to the mod:
+## Changes to original mod
 
 1. **Enemy Hp scaling has been removed entirely.**  
 Yup, there's scaling which itself is kinda counter-intuitive as it's 

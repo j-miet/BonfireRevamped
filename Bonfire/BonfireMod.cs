@@ -14,7 +14,7 @@ namespace Bonfire
         public void OnLoadLocal(PlayerStatus s) => Status = s;
         public PlayerStatus OnSaveLocal() => Status;
 
-        public override string GetVersion() => "4.0.1"; // keep incrementing the original mod version
+        public override string GetVersion() => "1.0.1"; // use custom versioning from now on (fork used 3.0.1)
         public int HitsSinceShielded { get; set; } = 0;
         public bool Crit { get; set; } = false;
 
