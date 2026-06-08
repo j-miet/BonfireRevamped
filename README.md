@@ -1,17 +1,21 @@
-# Hollow Knight Bonfire mod
+# Hollow Knight BonfireRevamped mod
 
-This is a fork of [TheodoreChristianRadu](https://github.com/TheodoreChristianRadu/Bonfire)'s repository which itself 
+This is a fork of [TheodoreChristianRadu's Bonfire](https://github.com/TheodoreChristianRadu/Bonfire) repository which itself 
 is a fork of [original BonfireMod by ricardosouzag](https://github.com/ricardosouzag/BonfireMod).
 
 ## What is it
 
-Bonfire mod adds a geo-based leveling system to Hollow Knight. This replicates the idea from Dark Souls games where 
+Original Bonfire mod adds a geo-based leveling system to Hollow Knight. This replicates the idea from Dark Souls games where 
 souls work both as currency and experience points for leveling character stats. 
 
 This way player can choose between raw stats/utility and usual upgrades/items. It also keeps geo useful even in the 
 end game: improve character power instead of saving up and spending it on unbreakable charms.
 
 While leveling certainly makes game easier, it can offer some refreshing variety to standard gameplay.
+
+Goal of this mod, named BonfireRevamped, is to
+1. make quality of life changes to improve player enjoyment 
+2. update the project's codebase to be easier to approach and update
 
 
 ## Changes to original mod
@@ -54,7 +58,8 @@ never explained anywhere. Scaling formula is also pretty bad as you can see belo
 2. **Bench bonfire visuals have been removed** because in my personal opinion they didn't fit the aesthetic of 
 Hollow Knight
 
-3. **All spells have now intelligence stat scaling**. Previously only howling wraiths/abyss shriek had the bonus damage applied.
+3. **All spells have now intelligence stat scaling**. Previously only howling wraiths/abyss shriek had the bonus 
+damage applied.
 
 4. **Extended bench menu to include toggle buttons** for
     - simple enemy health bars
@@ -74,8 +79,10 @@ Hollow Knight
     Code:
     - removed unused code like public fields and some LevellingSystem functions
     - changed most public interfaces to private because they are not accessed outside the class
-    - combined some code e.g. BonfireMod.HeroUpdate handles soul regen and crit rolls without creating separate hooks
-    - update readability: code is longer/more verbose, but also formatted better and includes a lot of comments for explanations
+    - combined some code e.g. BonfireRevamped.HeroUpdate handles soul regen and crit rolls without creating 
+    separate hooks
+    - update readability: code is longer/more verbose, but also formatted better and includes a lot of comments for 
+    explanations
 
 
 ## Installation
@@ -83,20 +90,24 @@ Hollow Knight
 *Mod only compatible with Hollow Knight 1.5.*
 
 This mod is not part of Lumafly mod manager so you need to perform manual installation:
-- Install the [modding API](https://github.com/hk-modding/api) or download [Lumafly](https://themulhima.github.io/Lumafly/) mod manager 
+- Install the [modding API](https://github.com/hk-modding/api) or download 
+[Lumafly](https://themulhima.github.io/Lumafly/) mod manager 
 - Download the [latest release](https://github.com/j-miet/BonfireRevamped/releases/latest) of the mod
 - Extract `BonfireRevamped.zip` into a `BonfireRevamped` folder. This folder should contain just two files:
      - `BonfireRevamped.dll`
      - `BonfireRevamped.pdb` 
 
-    Then move this folder to `Hollow Knight/Hollow Knight_Data/Managed/Mods` to finish installation. On Steam you'd end up with path
+    Then move this folder to `Hollow Knight/Hollow Knight_Data/Managed/Mods` to finish installation. On Steam you'd 
+    end up with path
 
     `C:/Program Files (x86)/Steam/steamapps/common/Hollow Knight/hollow_knight_Data/Managed/Mods/BonfireRevamped`
 
 **If you use modding API:** launch the game and mod should be enabled  
-**If you use Lumafly:** you will find *BonfireRevamped* in installed mods (it should say Version not from modlinks). Just enable it and launch modded game
+**If you use Lumafly:** you will find *BonfireRevamped* in installed mods (it should say Version not from modlinks). 
+Just enable it and launch modded game
 
-**If you use mods such as Enemy HP Bar and Better Void Heart, or anything else with custom hp bars and/or void heart soul regen:** 
+**If you use mods such as Enemy HP Bar and Better Void Heart, or anything else with custom hp bars and/or void heart 
+soul regen:** 
 - remove such mods, or 
 - use them but keep BonfireRevamped's own implementations toggled off to avoid conflicts
 

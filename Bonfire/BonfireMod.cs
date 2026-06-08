@@ -8,17 +8,17 @@ using UnityEngine.SceneManagement;
 
 namespace Bonfire
 {
-    public class BonfireMod : Mod, ILocalSettings<PlayerStatus>
+    public class BonfireRevamped : Mod, ILocalSettings<PlayerStatus>
     {
         public PlayerStatus Status = new PlayerStatus();
         public void OnLoadLocal(PlayerStatus s) => Status = s;
         public PlayerStatus OnSaveLocal() => Status;
 
-        public override string GetVersion() => "1.0.1"; // use custom versioning from now on (fork used 3.0.1)
+        public override string GetVersion() => "1.0.1";
         public int HitsSinceShielded { get; set; } = 0;
         public bool Crit { get; set; } = false;
 
-        public static BonfireMod Instance;
+        public static BonfireRevamped Instance;
         public static GameManager gm;
         public static PlayerData pd;
 

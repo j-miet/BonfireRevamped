@@ -85,103 +85,107 @@ namespace Bonfire
                 GUI.contentColor = Color.white;
                 GUI.color = Color.white;
 
-                BonfireMod.Instance.Status.RelicLevels =
-                    BonfireMod.Instance.Status.TotalFreeLevels + BonfireMod.Instance.Status.SpentFreeLevels;
-                BonfireMod.Instance.Status.CurrentLv =
-                    BonfireMod.Instance.Status.StrengthStat
-                    + BonfireMod.Instance.Status.DexterityStat
-                    + BonfireMod.Instance.Status.LuckStat
-                    + BonfireMod.Instance.Status.ResilienceStat
-                    + BonfireMod.Instance.Status.WisdomStat
-                    + BonfireMod.Instance.Status.IntelligenceStat
-                    + BonfireMod.Instance.Status.SpentGeoLevels
-                    + BonfireMod.Instance.Status.SpentFreeLevels - 5; //
-                if (BonfireMod.Instance.Status.CurrentLv == 1)
-                    BonfireMod.Instance.Status.TotalGeoLevels = 1;
-                BonfireMod.Instance.Status.GeoLevels =
-                    BonfireMod.Instance.Status.TotalGeoLevels
-                    + BonfireMod.Instance.Status.SpentGeoLevels;
-                BonfireMod.Instance.Status.GeoToLvUp =
-                    (int)(Math.Pow(BonfireMod.Instance.Status.GeoLevels, 2.0)
-                    + (10 * BonfireMod.Instance.Status.GeoLevels) + 50.0);
-                BonfireMod.Instance.Status.FreeLevels =
-                    BonfireMod.Instance.Status.RL3Levels
-                    + BonfireMod.Instance.Status.RL4Levels;
-                gotFreeLevel = !(BonfireMod.Instance.Status.FreeLevels == 0);
+                BonfireRevamped.Instance.Status.RelicLevels =
+                    BonfireRevamped.Instance.Status.TotalFreeLevels + BonfireRevamped.Instance.Status.SpentFreeLevels;
+                BonfireRevamped.Instance.Status.CurrentLv =
+                    BonfireRevamped.Instance.Status.StrengthStat
+                    + BonfireRevamped.Instance.Status.DexterityStat
+                    + BonfireRevamped.Instance.Status.LuckStat
+                    + BonfireRevamped.Instance.Status.ResilienceStat
+                    + BonfireRevamped.Instance.Status.WisdomStat
+                    + BonfireRevamped.Instance.Status.IntelligenceStat
+                    + BonfireRevamped.Instance.Status.SpentGeoLevels
+                    + BonfireRevamped.Instance.Status.SpentFreeLevels - 5; //
+                if (BonfireRevamped.Instance.Status.CurrentLv == 1)
+                    BonfireRevamped.Instance.Status.TotalGeoLevels = 1;
+                BonfireRevamped.Instance.Status.GeoLevels =
+                    BonfireRevamped.Instance.Status.TotalGeoLevels
+                    + BonfireRevamped.Instance.Status.SpentGeoLevels;
+                BonfireRevamped.Instance.Status.GeoToLvUp =
+                    (int)(Math.Pow(BonfireRevamped.Instance.Status.GeoLevels, 2.0)
+                    + (10 * BonfireRevamped.Instance.Status.GeoLevels) + 50.0);
+                BonfireRevamped.Instance.Status.FreeLevels =
+                    BonfireRevamped.Instance.Status.RL3Levels
+                    + BonfireRevamped.Instance.Status.RL4Levels;
+                gotFreeLevel = !(BonfireRevamped.Instance.Status.FreeLevels == 0);
 
-                string geoToLevelUp = BonfireMod.Instance.Status.GeoToLvUp.ToString();
+                string geoToLevelUp = BonfireRevamped.Instance.Status.GeoToLvUp.ToString();
 
                 string totalInt = (
-                    BonfireMod.Instance.Status.IntelligenceStat
-                    + BonfireMod.Instance.Status.IntelligenceIncrease
+                    BonfireRevamped.Instance.Status.IntelligenceStat
+                    + BonfireRevamped.Instance.Status.IntelligenceIncrease
                 ).ToString();
                 string totalStr = (
-                    BonfireMod.Instance.Status.StrengthStat
-                    + BonfireMod.Instance.Status.StrengthIncrease
+                    BonfireRevamped.Instance.Status.StrengthStat
+                    + BonfireRevamped.Instance.Status.StrengthIncrease
                 ).ToString();
                 string totalDex = (
-                    BonfireMod.Instance.Status.DexterityStat
-                    + BonfireMod.Instance.Status.DexterityIncrease
+                    BonfireRevamped.Instance.Status.DexterityStat
+                    + BonfireRevamped.Instance.Status.DexterityIncrease
                 ).ToString();
                 string totalLck = (
-                    BonfireMod.Instance.Status.LuckStat
-                    + BonfireMod.Instance.Status.LuckIncrease
+                    BonfireRevamped.Instance.Status.LuckStat
+                    + BonfireRevamped.Instance.Status.LuckIncrease
                 ).ToString();
                 string totalRes = (
-                    BonfireMod.Instance.Status.ResilienceStat
-                    + BonfireMod.Instance.Status.ResilienceIncrease
+                    BonfireRevamped.Instance.Status.ResilienceStat
+                    + BonfireRevamped.Instance.Status.ResilienceIncrease
                 ).ToString();
                 string totalWsdm = (
-                    BonfireMod.Instance.Status.WisdomStat
-                    + BonfireMod.Instance.Status.WisdomIncrease
+                    BonfireRevamped.Instance.Status.WisdomStat
+                    + BonfireRevamped.Instance.Status.WisdomIncrease
                 ).ToString();
 
                 string nailDamage = NailDamage(
-                    BonfireMod.Instance.Status.StrengthIncrease
-                    + BonfireMod.Instance.Status.StrengthStat
+                    BonfireRevamped.Instance.Status.StrengthIncrease
+                    + BonfireRevamped.Instance.Status.StrengthStat
                 ).ToString();
                 string attackSpeed = AttackSpeed(
-                    BonfireMod.Instance.Status.DexterityIncrease
-                    + BonfireMod.Instance.Status.DexterityStat
+                    BonfireRevamped.Instance.Status.DexterityIncrease
+                    + BonfireRevamped.Instance.Status.DexterityStat
                 ).ToString();
                 string extraMasks = ExtraMasks(
-                    BonfireMod.Instance.Status.ResilienceStat
-                    + BonfireMod.Instance.Status.ResilienceIncrease
+                    BonfireRevamped.Instance.Status.ResilienceStat
+                    + BonfireRevamped.Instance.Status.ResilienceIncrease
                 ).ToString();
                 string extraSoul = ExtraSoul(
-                    BonfireMod.Instance.Status.WisdomStat + BonfireMod.Instance.Status.WisdomIncrease,
+                    BonfireRevamped.Instance.Status.WisdomStat + BonfireRevamped.Instance.Status.WisdomIncrease,
                     11
                 ).ToString();
                 string critChance = CritChance(
-                    BonfireMod.Instance.Status.LuckStat
-                    + BonfireMod.Instance.Status.LuckIncrease
+                    BonfireRevamped.Instance.Status.LuckStat
+                    + BonfireRevamped.Instance.Status.LuckIncrease
                 ).ToString();
                 string critDamage = CritDamage(
-                    BonfireMod.Instance.Status.DexterityIncrease + BonfireMod.Instance.Status.DexterityStat,
+                    BonfireRevamped.Instance.Status.DexterityIncrease + BonfireRevamped.Instance.Status.DexterityStat,
                     100
                 ).ToString();
                 string geoIncrease = (
-                    5 * (BonfireMod.Instance.Status.LuckStat + BonfireMod.Instance.Status.LuckIncrease - 1)
+                    5 * (BonfireRevamped.Instance.Status.LuckStat + BonfireRevamped.Instance.Status.LuckIncrease - 1)
                 ).ToString();
                 string focusCost = FocusCost(
-                    BonfireMod.Instance.Status.IntelligenceStat
-                    + BonfireMod.Instance.Status.IntelligenceIncrease
+                    BonfireRevamped.Instance.Status.IntelligenceStat
+                    + BonfireRevamped.Instance.Status.IntelligenceIncrease
                 ).ToString();
                 string soulRegen = SoulRegen(
-                    BonfireMod.Instance.Status.WisdomStat
-                    + BonfireMod.Instance.Status.WisdomIncrease
+                    BonfireRevamped.Instance.Status.WisdomStat
+                    + BonfireRevamped.Instance.Status.WisdomIncrease
                 ).ToString();
                 string spellDamage = SpellDamage(
                     100,
-                    BonfireMod.Instance.Status.IntelligenceStat + BonfireMod.Instance.Status.IntelligenceIncrease
+                    BonfireRevamped.Instance.Status.IntelligenceStat
+                    + BonfireRevamped.Instance.Status.IntelligenceIncrease
                 ).ToString();
 
                 string expectedHits;
-                if (BonfireMod.Instance.Status.ResilienceStat + BonfireMod.Instance.Status.ResilienceIncrease > 1)
+                if (
+                    BonfireRevamped.Instance.Status.ResilienceStat
+                    + BonfireRevamped.Instance.Status.ResilienceIncrease > 1
+                )
                 {
                     expectedHits = ExpectedHits(
-                        BonfireMod.Instance.Status.ResilienceStat
-                        + BonfireMod.Instance.Status.ResilienceIncrease
+                        BonfireRevamped.Instance.Status.ResilienceStat
+                        + BonfireRevamped.Instance.Status.ResilienceIncrease
                     ).ToString();
                 }
                 else
@@ -190,31 +194,31 @@ namespace Bonfire
                 }
 
                 string applyText;
-                if (BonfireMod.Instance.Status.RL3Levels <= 0)
+                if (BonfireRevamped.Instance.Status.RL3Levels <= 0)
                 {
-                    if (BonfireMod.Instance.Status.RL4Levels <= 0)
+                    if (BonfireRevamped.Instance.Status.RL4Levels <= 0)
                     {
-                        if (BonfireMod.Instance.Status.SpentFreeLevels > 0)
+                        if (BonfireRevamped.Instance.Status.SpentFreeLevels > 0)
                         {
                             applyText = string.Concat(
-                                "Apply (", BonfireMod.Instance.Status.SpentGeo,
+                                "Apply (", BonfireRevamped.Instance.Status.SpentGeo,
                                 " geo and ",
-                                BonfireMod.Instance.Status.SpentFreeLevels, " relics)"
+                                BonfireRevamped.Instance.Status.SpentFreeLevels, " relics)"
                             );
                         }
                         else
                         {
-                            applyText = "Apply (" + BonfireMod.Instance.Status.SpentGeo + " geo)";
+                            applyText = "Apply (" + BonfireRevamped.Instance.Status.SpentGeo + " geo)";
                         }
                     }
                     else
                     {
-                        applyText = BonfireMod.Instance.Status.RL4Levels + " Free Levels!\n(Arcane Egg)";
+                        applyText = BonfireRevamped.Instance.Status.RL4Levels + " Free Levels!\n(Arcane Egg)";
                     }
                 }
                 else
                 {
-                    applyText = BonfireMod.Instance.Status.RL3Levels + " Free Levels!\n(King's Idol)";
+                    applyText = BonfireRevamped.Instance.Status.RL3Levels + " Free Levels!\n(King's Idol)";
                 }
 
                 // layout creation begins here
@@ -373,7 +377,7 @@ namespace Bonfire
                 GUILayout.EndHorizontal();
 
                 GUILayout.Label(
-                    new GUIContent("Current Level: " + BonfireMod.Instance.Status.CurrentLv.ToString()),
+                    new GUIContent("Current Level: " + BonfireRevamped.Instance.Status.CurrentLv.ToString()),
                     labelStyle
                 );
                 GUILayout.Label(new GUIContent("Geo to Level Up: " + geoToLevelUp), labelStyle);
@@ -406,20 +410,20 @@ namespace Bonfire
                     && PlayerData.instance.atBench
                 )
                 {
-                    BonfireMod.Instance.Status.SpentGeo = 0;
-                    BonfireMod.Instance.Status.StrengthIncrease = 0;
-                    BonfireMod.Instance.Status.DexterityIncrease = 0;
-                    BonfireMod.Instance.Status.WisdomIncrease = 0;
-                    BonfireMod.Instance.Status.ResilienceIncrease = 0;
-                    BonfireMod.Instance.Status.IntelligenceIncrease = 0;
-                    BonfireMod.Instance.Status.LuckIncrease = 0;
-                    BonfireMod.Instance.Status.RL3Levels = PlayerData.instance.trinket3;
-                    BonfireMod.Instance.Status.RL4Levels = PlayerData.instance.trinket4;
-                    BonfireMod.Instance.Status.FreeLevels =
-                        BonfireMod.Instance.Status.RL3Levels
-                        + BonfireMod.Instance.Status.RL4Levels;
-                    BonfireMod.Instance.Status.SpentFreeLevels = 0;
-                    BonfireMod.Instance.Status.SpentGeoLevels = 0;
+                    BonfireRevamped.Instance.Status.SpentGeo = 0;
+                    BonfireRevamped.Instance.Status.StrengthIncrease = 0;
+                    BonfireRevamped.Instance.Status.DexterityIncrease = 0;
+                    BonfireRevamped.Instance.Status.WisdomIncrease = 0;
+                    BonfireRevamped.Instance.Status.ResilienceIncrease = 0;
+                    BonfireRevamped.Instance.Status.IntelligenceIncrease = 0;
+                    BonfireRevamped.Instance.Status.LuckIncrease = 0;
+                    BonfireRevamped.Instance.Status.RL3Levels = PlayerData.instance.trinket3;
+                    BonfireRevamped.Instance.Status.RL4Levels = PlayerData.instance.trinket4;
+                    BonfireRevamped.Instance.Status.FreeLevels =
+                        BonfireRevamped.Instance.Status.RL3Levels
+                        + BonfireRevamped.Instance.Status.RL4Levels;
+                    BonfireRevamped.Instance.Status.SpentFreeLevels = 0;
+                    BonfireRevamped.Instance.Status.SpentGeoLevels = 0;
                 }
                 GUILayout.EndHorizontal();
 
@@ -428,12 +432,15 @@ namespace Bonfire
                 GUI.backgroundColor = Color.red;
                 if (
                     GUILayout.Button(
-                        new GUIContent("Respec (" + BonfireMod.Instance.Status.Respec.ToString() + "  Rancid Egg)"),
+                        new GUIContent(
+                            "Respec (" + BonfireRevamped.Instance.Status.Respec.ToString()
+                            + "  Rancid Egg)"
+                        ),
                         buttonStyle,
                         GUILayout.Height(40f),
                         GUILayout.Width(522f)
                         )
-                        && PlayerData.instance.rancidEggs >= BonfireMod.Instance.Status.Respec
+                        && PlayerData.instance.rancidEggs >= BonfireRevamped.Instance.Status.Respec
                         && PlayerData.instance.atBench
                 )
                 {
@@ -444,30 +451,30 @@ namespace Bonfire
                 GUILayout.EndHorizontal();
 
                 // ui extensions
-                BonfireMod.Instance.CreateVoidHeartSettingsUI();
-                BonfireMod.Instance.CreateEnemyHPToggleUI();
+                BonfireRevamped.Instance.CreateVoidHeartSettingsUI();
+                BonfireRevamped.Instance.CreateEnemyHPToggleUI();
 
                 GUILayout.EndArea();
             }
 
-            BonfireMod.Instance.DrawEnemyHealthBars();  // call this outside of bench check
+            BonfireRevamped.Instance.DrawEnemyHealthBars();  // call this outside of bench check
 
             if (!PlayerData.instance.atBench)
             {
-                BonfireMod.Instance.Status.SpentGeo = 0;
-                BonfireMod.Instance.Status.StrengthIncrease = 0;
-                BonfireMod.Instance.Status.DexterityIncrease = 0;
-                BonfireMod.Instance.Status.WisdomIncrease = 0;
-                BonfireMod.Instance.Status.ResilienceIncrease = 0;
-                BonfireMod.Instance.Status.IntelligenceIncrease = 0;
-                BonfireMod.Instance.Status.LuckIncrease = 0;
-                BonfireMod.Instance.Status.RL3Levels = PlayerData.instance.trinket3;
-                BonfireMod.Instance.Status.RL4Levels = PlayerData.instance.trinket4;
-                BonfireMod.Instance.Status.FreeLevels =
-                    BonfireMod.Instance.Status.RL3Levels
-                    + BonfireMod.Instance.Status.RL4Levels;
-                BonfireMod.Instance.Status.SpentFreeLevels = 0;
-                BonfireMod.Instance.Status.SpentGeoLevels = 0;
+                BonfireRevamped.Instance.Status.SpentGeo = 0;
+                BonfireRevamped.Instance.Status.StrengthIncrease = 0;
+                BonfireRevamped.Instance.Status.DexterityIncrease = 0;
+                BonfireRevamped.Instance.Status.WisdomIncrease = 0;
+                BonfireRevamped.Instance.Status.ResilienceIncrease = 0;
+                BonfireRevamped.Instance.Status.IntelligenceIncrease = 0;
+                BonfireRevamped.Instance.Status.LuckIncrease = 0;
+                BonfireRevamped.Instance.Status.RL3Levels = PlayerData.instance.trinket3;
+                BonfireRevamped.Instance.Status.RL4Levels = PlayerData.instance.trinket4;
+                BonfireRevamped.Instance.Status.FreeLevels =
+                    BonfireRevamped.Instance.Status.RL3Levels
+                    + BonfireRevamped.Instance.Status.RL4Levels;
+                BonfireRevamped.Instance.Status.SpentFreeLevels = 0;
+                BonfireRevamped.Instance.Status.SpentGeoLevels = 0;
             }
         }
 
@@ -519,8 +526,11 @@ namespace Bonfire
         private bool CanLevelUp()
         {
             return PlayerData.instance.atBench &&
-                (gotFreeLevel ||
-                BonfireMod.Instance.Status.GeoToLvUp + BonfireMod.Instance.Status.SpentGeo <= PlayerData.instance.geo);
+                (
+                    gotFreeLevel ||
+                    (BonfireRevamped.Instance.Status.GeoToLvUp
+                    + BonfireRevamped.Instance.Status.SpentGeo <= PlayerData.instance.geo)
+                );
         }
 
         // checks if inventory is open
@@ -539,34 +549,34 @@ namespace Bonfire
         // respect levels
         private void Respec()
         {
-            PlayerData.instance.AddGeo(BonfireMod.Instance.Status.TotalSpentGeo);
-            HeroController.instance.AddGeoToCounter(BonfireMod.Instance.Status.TotalSpentGeo);
-            PlayerData.instance.trinket3 += BonfireMod.Instance.Status.TotalFreeLevels;
+            PlayerData.instance.AddGeo(BonfireRevamped.Instance.Status.TotalSpentGeo);
+            HeroController.instance.AddGeoToCounter(BonfireRevamped.Instance.Status.TotalSpentGeo);
+            PlayerData.instance.trinket3 += BonfireRevamped.Instance.Status.TotalFreeLevels;
             PlayMakerFSM.BroadcastEvent("TRINK 3");
-            BonfireMod.Instance.Status.StrengthStat = 1;
-            BonfireMod.Instance.Status.DexterityStat = 1;
-            BonfireMod.Instance.Status.ResilienceStat = 1;
-            BonfireMod.Instance.Status.WisdomStat = 1;
-            BonfireMod.Instance.Status.IntelligenceStat = 1;
-            BonfireMod.Instance.Status.LuckStat = 1;
-            BonfireMod.Instance.Status.StrengthIncrease = 0;
-            BonfireMod.Instance.Status.DexterityIncrease = 0;
-            BonfireMod.Instance.Status.IntelligenceIncrease = 0;
-            BonfireMod.Instance.Status.ResilienceIncrease = 0;
-            BonfireMod.Instance.Status.WisdomIncrease = 0;
-            BonfireMod.Instance.Status.LuckIncrease = 0;
-            BonfireMod.Instance.Status.SpentGeo = 0;
-            BonfireMod.Instance.Status.TotalSpentGeo = 0;
-            BonfireMod.Instance.Status.FreeLevels = 0;
-            BonfireMod.Instance.Status.TotalFreeLevels = 0;
-            BonfireMod.Instance.Status.RL3Levels = 0;
-            BonfireMod.Instance.Status.GeoLevels = 0;
-            BonfireMod.Instance.Status.TotalGeoLevels = 1;
-            BonfireMod.Instance.Status.SpentGeoLevels = 0;
-            BonfireMod.Instance.Status.RelicLevels = 0;
-            BonfireMod.Instance.Status.CurrentLv = 1;
-            PlayerData.instance.rancidEggs -= BonfireMod.Instance.Status.Respec;
-            BonfireMod.Instance.Status.Respec += 1;
+            BonfireRevamped.Instance.Status.StrengthStat = 1;
+            BonfireRevamped.Instance.Status.DexterityStat = 1;
+            BonfireRevamped.Instance.Status.ResilienceStat = 1;
+            BonfireRevamped.Instance.Status.WisdomStat = 1;
+            BonfireRevamped.Instance.Status.IntelligenceStat = 1;
+            BonfireRevamped.Instance.Status.LuckStat = 1;
+            BonfireRevamped.Instance.Status.StrengthIncrease = 0;
+            BonfireRevamped.Instance.Status.DexterityIncrease = 0;
+            BonfireRevamped.Instance.Status.IntelligenceIncrease = 0;
+            BonfireRevamped.Instance.Status.ResilienceIncrease = 0;
+            BonfireRevamped.Instance.Status.WisdomIncrease = 0;
+            BonfireRevamped.Instance.Status.LuckIncrease = 0;
+            BonfireRevamped.Instance.Status.SpentGeo = 0;
+            BonfireRevamped.Instance.Status.TotalSpentGeo = 0;
+            BonfireRevamped.Instance.Status.FreeLevels = 0;
+            BonfireRevamped.Instance.Status.TotalFreeLevels = 0;
+            BonfireRevamped.Instance.Status.RL3Levels = 0;
+            BonfireRevamped.Instance.Status.GeoLevels = 0;
+            BonfireRevamped.Instance.Status.TotalGeoLevels = 1;
+            BonfireRevamped.Instance.Status.SpentGeoLevels = 0;
+            BonfireRevamped.Instance.Status.RelicLevels = 0;
+            BonfireRevamped.Instance.Status.CurrentLv = 1;
+            PlayerData.instance.rancidEggs -= BonfireRevamped.Instance.Status.Respec;
+            BonfireRevamped.Instance.Status.Respec += 1;
             PlayerData.UpdateBlueHealth();
         }
 
@@ -574,76 +584,76 @@ namespace Bonfire
         private void IncreaseStat(string stat)
         {
             if (stat == "Strength")
-                BonfireMod.Instance.Status.StrengthIncrease++;
+                BonfireRevamped.Instance.Status.StrengthIncrease++;
             else if (stat == "Dexterity")
-                BonfireMod.Instance.Status.DexterityIncrease++;
+                BonfireRevamped.Instance.Status.DexterityIncrease++;
             else if (stat == "Intelligence")
-                BonfireMod.Instance.Status.IntelligenceIncrease++;
+                BonfireRevamped.Instance.Status.IntelligenceIncrease++;
             else if (stat == "Resilience")
-                BonfireMod.Instance.Status.ResilienceIncrease++;
+                BonfireRevamped.Instance.Status.ResilienceIncrease++;
             else if (stat == "Wisdom")
-                BonfireMod.Instance.Status.WisdomIncrease++;
+                BonfireRevamped.Instance.Status.WisdomIncrease++;
             else
-                BonfireMod.Instance.Status.LuckIncrease++;
+                BonfireRevamped.Instance.Status.LuckIncrease++;
 
-            if (BonfireMod.Instance.Status.RL3Levels <= 0)
+            if (BonfireRevamped.Instance.Status.RL3Levels <= 0)
             {
-                if (BonfireMod.Instance.Status.RL4Levels <= 0)
+                if (BonfireRevamped.Instance.Status.RL4Levels <= 0)
                 {
-                    BonfireMod.Instance.Status.SpentGeo += BonfireMod.Instance.Status.GeoToLvUp;
-                    BonfireMod.Instance.Status.SpentGeoLevels++;
+                    BonfireRevamped.Instance.Status.SpentGeo += BonfireRevamped.Instance.Status.GeoToLvUp;
+                    BonfireRevamped.Instance.Status.SpentGeoLevels++;
                 }
                 else
                 {
-                    BonfireMod.Instance.Status.RL4Levels--;
-                    BonfireMod.Instance.Status.SpentFreeLevels++;
+                    BonfireRevamped.Instance.Status.RL4Levels--;
+                    BonfireRevamped.Instance.Status.SpentFreeLevels++;
                 }
             }
             else
             {
-                BonfireMod.Instance.Status.RL3Levels--;
-                BonfireMod.Instance.Status.SpentFreeLevels++;
+                BonfireRevamped.Instance.Status.RL3Levels--;
+                BonfireRevamped.Instance.Status.SpentFreeLevels++;
             }
         }
 
         // apply level by updating player status
         private void ApplyLevel()
         {
-            PlayerData.instance.TakeGeo(BonfireMod.Instance.Status.SpentGeo);
-            PlayerData.instance.trinket3 = BonfireMod.Instance.Status.RL3Levels;
-            PlayerData.instance.trinket4 = BonfireMod.Instance.Status.RL4Levels;
-            HeroController.instance.geoCounter.TakeGeo(BonfireMod.Instance.Status.SpentGeo);
-            BonfireMod.Instance.Status.TotalSpentGeo += BonfireMod.Instance.Status.SpentGeo;
-            BonfireMod.Instance.Status.SpentGeo = 0;
-            BonfireMod.Instance.Status.TotalGeoLevels += BonfireMod.Instance.Status.SpentGeoLevels;
-            BonfireMod.Instance.Status.SpentGeoLevels = 0;
-            BonfireMod.Instance.Status.TotalFreeLevels += BonfireMod.Instance.Status.SpentFreeLevels;
-            BonfireMod.Instance.Status.SpentFreeLevels = 0;
-            BonfireMod.Instance.Status.StrengthStat += BonfireMod.Instance.Status.StrengthIncrease;
-            BonfireMod.Instance.Status.DexterityStat += BonfireMod.Instance.Status.DexterityIncrease;
-            BonfireMod.Instance.Status.ResilienceStat += BonfireMod.Instance.Status.ResilienceIncrease;
-            BonfireMod.Instance.Status.WisdomStat += BonfireMod.Instance.Status.WisdomIncrease;
-            BonfireMod.Instance.Status.IntelligenceStat += BonfireMod.Instance.Status.IntelligenceIncrease;
-            BonfireMod.Instance.Status.LuckStat += BonfireMod.Instance.Status.LuckIncrease;
+            PlayerData.instance.TakeGeo(BonfireRevamped.Instance.Status.SpentGeo);
+            PlayerData.instance.trinket3 = BonfireRevamped.Instance.Status.RL3Levels;
+            PlayerData.instance.trinket4 = BonfireRevamped.Instance.Status.RL4Levels;
+            HeroController.instance.geoCounter.TakeGeo(BonfireRevamped.Instance.Status.SpentGeo);
+            BonfireRevamped.Instance.Status.TotalSpentGeo += BonfireRevamped.Instance.Status.SpentGeo;
+            BonfireRevamped.Instance.Status.SpentGeo = 0;
+            BonfireRevamped.Instance.Status.TotalGeoLevels += BonfireRevamped.Instance.Status.SpentGeoLevels;
+            BonfireRevamped.Instance.Status.SpentGeoLevels = 0;
+            BonfireRevamped.Instance.Status.TotalFreeLevels += BonfireRevamped.Instance.Status.SpentFreeLevels;
+            BonfireRevamped.Instance.Status.SpentFreeLevels = 0;
+            BonfireRevamped.Instance.Status.StrengthStat += BonfireRevamped.Instance.Status.StrengthIncrease;
+            BonfireRevamped.Instance.Status.DexterityStat += BonfireRevamped.Instance.Status.DexterityIncrease;
+            BonfireRevamped.Instance.Status.ResilienceStat += BonfireRevamped.Instance.Status.ResilienceIncrease;
+            BonfireRevamped.Instance.Status.WisdomStat += BonfireRevamped.Instance.Status.WisdomIncrease;
+            BonfireRevamped.Instance.Status.IntelligenceStat += BonfireRevamped.Instance.Status.IntelligenceIncrease;
+            BonfireRevamped.Instance.Status.LuckStat += BonfireRevamped.Instance.Status.LuckIncrease;
             HeroController.instance.CharmUpdate();
             PlayerData.instance.UpdateBlueHealth();
             PlayMakerFSM.BroadcastEvent("UPDATE BLUE HEALTH");
 
-            BonfireMod.Instance.Log(
+            BonfireRevamped.Instance.Log(
                 "Level up applied: "
-                + BonfireMod.Instance.Status.StrengthIncrease + " Strength, "
-                + BonfireMod.Instance.Status.DexterityIncrease + " Dexterity, "
-                + BonfireMod.Instance.Status.IntelligenceIncrease + " Intelligence, "
-                + BonfireMod.Instance.Status.ResilienceIncrease + " Resilience, "
-                + BonfireMod.Instance.Status.WisdomIncrease + " Wisdom and "
-                + BonfireMod.Instance.Status.LuckIncrease + " Luck."
+                + BonfireRevamped.Instance.Status.StrengthIncrease + " Strength, "
+                + BonfireRevamped.Instance.Status.DexterityIncrease + " Dexterity, "
+                + BonfireRevamped.Instance.Status.IntelligenceIncrease + " Intelligence, "
+                + BonfireRevamped.Instance.Status.ResilienceIncrease + " Resilience, "
+                + BonfireRevamped.Instance.Status.WisdomIncrease + " Wisdom and "
+                + BonfireRevamped.Instance.Status.LuckIncrease + " Luck."
             );
-            BonfireMod.Instance.Status.StrengthIncrease = 0;
-            BonfireMod.Instance.Status.DexterityIncrease = 0;
-            BonfireMod.Instance.Status.WisdomIncrease = 0;
-            BonfireMod.Instance.Status.ResilienceIncrease = 0;
-            BonfireMod.Instance.Status.IntelligenceIncrease = 0;
-            BonfireMod.Instance.Status.LuckIncrease = 0;
+            BonfireRevamped.Instance.Status.StrengthIncrease = 0;
+            BonfireRevamped.Instance.Status.DexterityIncrease = 0;
+            BonfireRevamped.Instance.Status.WisdomIncrease = 0;
+            BonfireRevamped.Instance.Status.ResilienceIncrease = 0;
+            BonfireRevamped.Instance.Status.IntelligenceIncrease = 0;
+            BonfireRevamped.Instance.Status.LuckIncrease = 0;
             PlayerData.UpdateBlueHealth();
         }
 
