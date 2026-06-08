@@ -54,7 +54,7 @@ never explained anywhere. Scaling formula is also pretty bad as you can see belo
 2. **Bench bonfire visuals have been removed** because in my personal opinion they didn't fit the aesthetic of 
 Hollow Knight
 
-3. **All spells have now intelligence scaling**. Previously only howling wraiths/abyss shriek had the bonus damage applied.
+3. **All spells have now intelligence stat scaling**. Previously only howling wraiths/abyss shriek had the bonus damage applied.
 
 4. **Extended bench menu to include toggle buttons** for
     - simple enemy health bars
@@ -62,7 +62,7 @@ Hollow Knight
         - for enemies: only displayed if enemy is damaged (= not full hp), has red color
         - for bosses: always displayed, has orange color, larger than normal bar
     - void heart soul regen (regen multiplier can be adjusted)
-        - only applies to void hearth -> you need to have obtained this charm
+        - only applies to void heart -> you need to have obtained this charm
         - use this at your own discretion: for balanced gameplay keep it at a low 
         multiplier or disable entirely because you already have wisdom stat for base regen
 
