@@ -231,7 +231,7 @@ namespace Bonfire
                         GUILayout.Height(40f),
                         GUILayout.Width(160f)
                     )
-                    && CanLevelUp() && HeroController.instance.cState.nearBench
+                    && CanLevelUp() && PlayerData.instance.atBench
                 )
                 {
                     IncreaseStat("Strength");
@@ -243,7 +243,8 @@ namespace Bonfire
                         GUILayout.Height(40f),
                         GUILayout.Width(160f)
                     )
-                    && CanLevelUp() && HeroController.instance.cState.nearBench)
+                    && CanLevelUp() && PlayerData.instance.atBench
+                )
                 {
                     IncreaseStat("Dexterity");
                 }
@@ -254,7 +255,8 @@ namespace Bonfire
                         GUILayout.Height(40f),
                         GUILayout.Width(160f)
                     )
-                    && CanLevelUp() && HeroController.instance.cState.nearBench)
+                    && CanLevelUp() && PlayerData.instance.atBench
+                )
                 {
                     IncreaseStat("Intelligence");
                 }
@@ -265,7 +267,8 @@ namespace Bonfire
                         GUILayout.Height(40f),
                         GUILayout.Width(160f)
                     )
-                    && CanLevelUp() && HeroController.instance.cState.nearBench)
+                    && CanLevelUp() && PlayerData.instance.atBench
+                )
                 {
                     IncreaseStat("Resilience");
                 }
@@ -276,7 +279,7 @@ namespace Bonfire
                         GUILayout.Height(40f),
                         GUILayout.Width(160f)
                     )
-                    && CanLevelUp() && HeroController.instance.cState.nearBench
+                    && CanLevelUp() && PlayerData.instance.atBench
                 )
                 {
                     IncreaseStat("Wisdom");
@@ -288,7 +291,7 @@ namespace Bonfire
                         GUILayout.Height(40f),
                         GUILayout.Width(160f)
                     )
-                    && CanLevelUp() && HeroController.instance.cState.nearBench
+                    && CanLevelUp() && PlayerData.instance.atBench
                 )
                 {
                     IncreaseStat("Luck");
@@ -385,7 +388,7 @@ namespace Bonfire
                         GUILayout.Height(40f),
                         GUILayout.Width(258f)
                     )
-                    && HeroController.instance.cState.nearBench
+                    && PlayerData.instance.atBench
                 )
                 {
                     ApplyLevel();
@@ -400,7 +403,7 @@ namespace Bonfire
                         GUILayout.Height(40f),
                         GUILayout.Width(258f)
                     )
-                    && HeroController.instance.cState.nearBench
+                    && PlayerData.instance.atBench
                 )
                 {
                     BonfireMod.Instance.Status.SpentGeo = 0;
@@ -431,7 +434,7 @@ namespace Bonfire
                         GUILayout.Width(522f)
                         )
                         && PlayerData.instance.rancidEggs >= BonfireMod.Instance.Status.Respec
-                        && HeroController.instance.cState.nearBench
+                        && PlayerData.instance.atBench
                 )
                 {
                     Respec();
@@ -449,7 +452,7 @@ namespace Bonfire
 
             BonfireMod.Instance.DrawEnemyHealthBars();  // call this outside of bench check
 
-            if (!HeroController.instance.cState.nearBench)
+            if (!PlayerData.instance.atBench)
             {
                 BonfireMod.Instance.Status.SpentGeo = 0;
                 BonfireMod.Instance.Status.StrengthIncrease = 0;
@@ -515,7 +518,7 @@ namespace Bonfire
         // checks if player can level up (be near bench and have free levels or enough geo)
         private bool CanLevelUp()
         {
-            return HeroController.instance.cState.nearBench &&
+            return PlayerData.instance.atBench &&
                 (gotFreeLevel ||
                 BonfireMod.Instance.Status.GeoToLvUp + BonfireMod.Instance.Status.SpentGeo <= PlayerData.instance.geo);
         }

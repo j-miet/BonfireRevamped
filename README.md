@@ -21,7 +21,7 @@ While leveling certainly makes game easier, it can offer some refreshing variety
 
 #### Following changes have been made to the mod:
 
-1. **Hp scaling has been removed entirely.**  
+1. **Enemy Hp scaling has been removed entirely.**  
 Yup, there's scaling which itself is kinda counter-intuitive as it's 
 never explained anywhere. Scaling formula is also pretty bad as you can see below:
 
@@ -35,7 +35,7 @@ never explained anywhere. Scaling formula is also pretty bad as you can see belo
     - Sister of Battle on Radiant difficulty have 750+2 * 950 = 2650, but game loads them as separate entities so 
     it's actually just the 750/950 values
 
-    Following table shows how Knight's level and the amount of dreamers killed affect enemy hp multiplier:
+    Following table shows how Knight's level and the amount of dreamers killed affected enemy hp multiplier:
 
     |  |0 killed  | 1 killed | 2 killed | 3 killed |
     |---|:-:|:-:|:-:|:-:|
@@ -53,13 +53,15 @@ never explained anywhere. Scaling formula is also pretty bad as you can see belo
 
     As you can see it's very harsh and increments would get applied suddenly:
     - leveling up from level 11 -> 12 even with 0 dreamers causes enemies hp to double
-    - with all 3 dreamers killed and just hitting level 3 is already a 3x multiplier. And as you probably keep still 
-    leveling, you're likely to have a whopping 4x multiplier on late/end game bosses after reaching lvl 19
+    - with all 3 dreamers killed and just hitting level 3 is already a 3x multiplier. And as you probably kept still 
+    leveling, you'd have a whopping 4x multiplier on late/end game bosses after reaching lvl 19
 
 2. **Bench bonfire visuals have been removed** because in my personal opinion they didn't fit the aesthetic of 
 Hollow Knight
 
-3. **Extended bench menu to include toggle buttons** for
+3. **All spells have now intelligence scaling**. Previously only howling wraiths/abyss shriek had the bonus damage applied.
+
+4. **Extended bench menu to include toggle buttons** for
     - simple enemy health bars
         - attached to each enemy individually
         - for enemies: only displayed if enemy is damaged (= not full hp), has red color
@@ -69,7 +71,7 @@ Hollow Knight
         - use this at your own discretion: for balanced gameplay keep it at a low 
         multiplier or disable entirely because you already have wisdom stat for base regen
 
-4. **Other changes**
+5. **Other changes**
 
     Gameplay:
     - ui menu now opens only when sitting on a bench (previously just being next to it was enough)
@@ -78,25 +80,8 @@ Hollow Knight
     - removed unused code like public fields and some LevellingSystem functions
     - changed most public interfaces to private because they are not accessed outside the class
     - combined some code e.g. BonfireMod.HeroUpdate handles soul regen and crit rolls without creating separate hooks
-    - update readability: code is longer/more verbose, but also formatted better and includes a lot of comments to explain codebase
+    - update readability: code is longer/more verbose, but also formatted better and includes a lot of comments for explanations
 
-## Update ideas
-
-If there will be any future updates, here's some ideas:
-
-- Optional hardmode toggle (can be enabled/disabled at any point)
-    - each area has individual enemy hp+damage scaling, making stats even more important. This way on some area enemies (at least the stronger ones) could deal 1 or even 2 extra masks damage.
-    
-    Until then the best "hardmode" replicant would be using overcharming base game mechanic for 2x enemy damage
-
-- Built-in bench fast travel system. 
-    - could keep system locked before a certain unlock trigger (e.g. kill any dreamer)
-    - already tested this, but it's very difficult to get a working one which properly warps you from bench to bench without mixing rooms and clipping player inside walls
-    
-    For now: best alternative is to just use BenchWarp mod and use warping whenever you feel like it's justified
-
-- split code base a bit as current files BonfireMod.cs and LevellingSystem.cs are quite long and do mix some of their responsibilities. 
-    - for example gui handling happens inside LevellingSystem.OnGUI trigger so hp bar + void heart regen ui have to enabled inside this. So UI could be moved into it's own class and leveling logic stays in LevellingSystem.
 
 ## Installation
 
@@ -109,7 +94,7 @@ This mod is not part of Lumafly mod manager so you need to perform manual instal
      - `BonfireRevamped.dll`
      - `BonfireRevamped.pdb` 
 
-    Then move this folder to `Hollow Knight/Hollow Knight_Data/Managed/Mods` to install the mod. On Steam you'd end up with path
+    Then move this folder to `Hollow Knight/Hollow Knight_Data/Managed/Mods` to finish installation. On Steam you'd end up with path
 
     `C:/Program Files (x86)/Steam/steamapps/common/Hollow Knight/hollow_knight_Data/Managed/Mods/BonfireRevamped`
 

@@ -14,7 +14,7 @@ namespace Bonfire
         public void OnLoadLocal(PlayerStatus s) => Status = s;
         public PlayerStatus OnSaveLocal() => Status;
 
-        public override string GetVersion() => "4.0.0"; // keep incrementing the original mod version
+        public override string GetVersion() => "4.0.1"; // keep incrementing the original mod version
         public int HitsSinceShielded { get; set; } = 0;
         public bool Crit { get; set; } = false;
 
@@ -109,7 +109,7 @@ namespace Bonfire
                 float currentHp = hm.hp;
                 bool isBoss = enemyIsBoss.TryGetValue(hm, out bool b) && b;
 
-                if (currentHp == maxHp && !isBoss) return; // if full hp, don't display bar for default enemies
+                if (currentHp == maxHp && !isBoss) continue; // if full hp, don't display bar for default enemies
 
                 float pct = Mathf.Clamp01(currentHp / maxHp);
 
@@ -173,15 +173,18 @@ namespace Bonfire
             HealthManager hm = enemy.GetComponent<HealthManager>();
 
 
-            if (hm != null && !enemyMaxHp.ContainsKey(hm))
+            if (hm != null)
             {
-                enemyMaxHp.Add(hm, hm.hp);
-                enemyIsBoss.Add(hm, BossSceneController.Instance != null);
-            }
+                if (!enemyMaxHp.ContainsKey(hm))
+                {
+                    enemyMaxHp.Add(hm, hm.hp);
+                    enemyIsBoss.Add(hm, BossSceneController.Instance != null);
+                }
 
-            hm.SetGeoSmall(ls.IncreaseGeo(GetGeo("small", hm), Status.LuckStat));
-            hm.SetGeoMedium(ls.IncreaseGeo(GetGeo("medium", hm), Status.LuckStat));
-            hm.SetGeoLarge(ls.IncreaseGeo(GetGeo("large", hm), Status.LuckStat));
+                hm.SetGeoSmall(ls.IncreaseGeo(GetGeo("small", hm), Status.LuckStat));
+                hm.SetGeoMedium(ls.IncreaseGeo(GetGeo("medium", hm), Status.LuckStat));
+                hm.SetGeoLarge(ls.IncreaseGeo(GetGeo("large", hm), Status.LuckStat));
+            }
 
             return isAlreadyDead;
         }
@@ -347,10 +350,17 @@ namespace Bonfire
         // called when hero (= player character) gets updated
         private void HeroUpdate()
         {
+            var toRemove = new List<HealthManager>();
             foreach (var e in enemyMaxHp.Keys) // actively track hp bars for removal
             {
                 if (e == null || e.hp <= 0)
-                    enemyMaxHp.Remove(e);
+                    toRemove.Add(e);
+            }
+
+            foreach (var e in toRemove)
+            {
+                enemyMaxHp.Remove(e);
+                enemyIsBoss.Remove(e);
             }
 
             // crit chance roll
@@ -404,11 +414,21 @@ namespace Bonfire
 
             switch (hit.Source.name)
             {
-                case "Fireball": // vengeful spirit
-                case "Fireball(Clone)": // shade soul?
+                case "Fireball": // vengeful spirit / shade soul
+                    isSpell = true;
+                    break;
+                case "Fireball(Clone)": // not sure what this refers to exactly
+                    isSpell = true;
+                    break;
                 case "Q Fall Damage": // desolate dive / descending dark, direct hit damage
+                    isSpell = true;
+                    break;
                 case "Hit L": // dive, left side
+                    isSpell = true;
+                    break;
                 case "Hit R": // dive, right side
+                    isSpell = true;
+                    break;
                 case "Hit U": // howling wraiths / abyss shriek
                     isSpell = true;
                     break;
@@ -418,7 +438,7 @@ namespace Bonfire
             }
 
             // add spell damage scaling based on intelligence stat
-            // only wraith/shriek is scaled here; could add fireball + dive here too later 
+            // previously only wraith/shriek got scaling, but it's now applied to all spells
             if (isSpell)
             {
                 LogDebug($"[Vanilla] Spell name: {hit.Source.name} - {hit.Source}. Damage: {hit.DamageDealt}");
@@ -428,7 +448,8 @@ namespace Bonfire
                 LogDebug($"[Bonfire] Spell name: {hit.Source.name} - {hit.Source}. Damage: {hit.DamageDealt}");
             }
 
-            if (hit.Source.name.Contains("lash")) // refers to slash nail arts
+            // nail arts scaling based on strength stat
+            if (hit.Source.name.Contains("lash"))
             {
                 LogDebug($@"[Vanilla] Damage for {hit.Source.name} = {hit.DamageDealt}");
 
@@ -438,7 +459,7 @@ namespace Bonfire
                 LogDebug($@"Crit chance: {ls.CritChance(Status.LuckStat)}. Rolled {critRoll}.");
 
                 Crit = critRoll <= ls.CritChance(Status.LuckStat);
-                if (Crit)
+                if (Crit) // nail art crit
                 {
                     hit.DamageDealt = ls.CritDamage(Status.DexterityStat, hit.DamageDealt);
 
