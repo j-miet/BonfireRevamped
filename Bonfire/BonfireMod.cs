@@ -324,6 +324,10 @@ namespace Bonfire
 
                 hit.DamageDealt = ls.NailDamage(Status.StrengthStat);
 
+                // apply Fragile/Unbreakable Strength damage bonus to nail arts
+                if (PlayerData.instance.equippedCharm_25)
+                    hit.DamageDealt = (int)(hit.DamageDealt * 1.5f);
+
                 LogDebug($"[Bonfire] Damage for {hit.Source.name} = {hit.DamageDealt}");
                 LogDebug($"Crit chance: {ls.CritChance(Status.LuckStat)}. Rolled {critRoll}.");
 
