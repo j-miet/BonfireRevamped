@@ -15,6 +15,37 @@ namespace Bonfire
         public readonly Dictionary<HealthManager, float> EnemyMaxHp = new Dictionary<HealthManager, float>();
         public readonly Dictionary<HealthManager, bool> EnemyIsBoss = new Dictionary<HealthManager, bool>();
 
+        // Unity's GUI rendering loop
+        public void OnGUI()
+        {
+            if (GameManager.instance == null) return;
+
+            if (!(GameManager.instance.gameState == GameState.PLAYING ||
+                  GameManager.instance.gameState == GameState.PAUSED) ||
+                InInventory())
+                return;
+
+            EnsureFonts();
+
+            if (PlayerData.instance.atBench && !GameManager.instance.isPaused)
+            {
+                GUI.enabled = true;
+                EnsureStyles();
+
+                GUI.backgroundColor = Color.white;
+                GUI.contentColor = Color.white;
+                GUI.color = Color.white;
+
+                DrawBenchUI();
+            }
+
+            DrawEnemyHealthBars();   // shown outside the bench check
+
+            // reset pending changes when the player leaves the bench
+            if (!PlayerData.instance.atBench)
+                ResetPendingLevelUp();
+        }
+
         // fonts & styles
         private Font trajanBold;
         private Font trajanNormal;
@@ -46,103 +77,76 @@ namespace Bonfire
             Instance = this;
         }
 
-        public void OnGUI()
-        {
-            if (GameManager.instance == null) return;
-
-            if (!(GameManager.instance.gameState == GameState.PLAYING ||
-                  GameManager.instance.gameState == GameState.PAUSED) ||
-                InInventory())
-                return;
-
-            EnsureFonts();
-
-            if (PlayerData.instance.atBench && !GameManager.instance.isPaused)
-            {
-                GUI.enabled = true;
-                EnsureStyles();
-
-                GUI.backgroundColor = Color.white;
-                GUI.contentColor = Color.white;
-                GUI.color = Color.white;
-
-                DrawBenchUI();
-            }
-
-            DrawEnemyHealthBars();   // shown outside the bench check
-
-            // reset pending changes when the player leaves the bench
-            if (!PlayerData.instance.atBench)
-                ResetPendingLevelUp();
-        }
-
         // bench ui
 
         /// <summary>
         /// Main bench-side levelling panel (stat buttons, preview labels, apply/cancel/respec).
-        /// Called from OnGUI when the player is at a bench.
+        /// Called from OnGUI when the player is on a bench.
         /// </summary>
         private void DrawBenchUI()
         {
             var s = BonfireRevamped.Instance.Status;
             var ls = LevellingSystem.Instance;
 
-            s.RelicLevels = s.TotalFreeLevels + s.SpentFreeLevels;
-            s.CurrentLv = s.StrengthStat + s.DexterityStat + s.LuckStat
+            if (s.PendingRelicLevels == 0 && s.PendingGeoLevels == 0)
+            {
+                s.AvailableKingsIdols = PlayerData.instance.trinket3;
+                s.AvailableArcaneEggs = PlayerData.instance.trinket4;
+            }
+
+            int availableRelicLevels = s.AvailableKingsIdols + s.AvailableArcaneEggs
+                                     + s.RespecRelicLevels - s.PendingRelicLevels;
+            bool gotFreeLevel = availableRelicLevels > 0;
+
+            int geoLevels = s.TotalGeoLevels + s.PendingGeoLevels;
+            int geoToLvlUp = (int)(Math.Pow(geoLevels, 2.0) + (10 * geoLevels) + 50.0);
+
+            int currentLvl = s.StrengthStat + s.DexterityStat + s.LuckStat
                           + s.ResilienceStat + s.WisdomStat + s.IntelligenceStat
-                          + s.SpentGeoLevels + s.SpentFreeLevels - 5;
-
-            if (s.CurrentLv == 1)
-                s.TotalGeoLevels = 1;
-
-            s.GeoLevels = s.TotalGeoLevels + s.SpentGeoLevels;
-            s.GeoToLvUp = (int)(Math.Pow(s.GeoLevels, 2.0) + (10 * s.GeoLevels) + 50.0);
-            s.FreeLevels = s.RL3Levels + s.RL4Levels;
-            bool gotFreeLevel = s.FreeLevels != 0;
+                          + s.PendingRelicLevels
+                          + s.PendingGeoLevels
+                          + 1;
 
             // preview strings
-            string totalStr = (s.StrengthStat + s.StrengthIncrease).ToString();
-            string totalDex = (s.DexterityStat + s.DexterityIncrease).ToString();
-            string totalInt = (s.IntelligenceStat + s.IntelligenceIncrease).ToString();
-            string totalRes = (s.ResilienceStat + s.ResilienceIncrease).ToString();
-            string totalWsdm = (s.WisdomStat + s.WisdomIncrease).ToString();
-            string totalLck = (s.LuckStat + s.LuckIncrease).ToString();
+            string totalStr = (s.StrengthStat + ls.StrengthIncrease).ToString();
+            string totalDex = (s.DexterityStat + ls.DexterityIncrease).ToString();
+            string totalInt = (s.IntelligenceStat + ls.IntelligenceIncrease).ToString();
+            string totalRes = (s.ResilienceStat + ls.ResilienceIncrease).ToString();
+            string totalWsdm = (s.WisdomStat + ls.WisdomIncrease).ToString();
+            string totalLck = (s.LuckStat + ls.LuckIncrease).ToString();
 
-            string nailDamage = ls.NailDamage(s.StrengthStat + s.StrengthIncrease).ToString();
-            string attackSpeed = ls.AttackSpeed(s.DexterityStat + s.DexterityIncrease).ToString();
-            string extraMasks = ls.ExtraMasks(s.ResilienceStat + s.ResilienceIncrease).ToString();
-            string extraSoul = ls.ExtraSoul(s.WisdomStat + s.WisdomIncrease, 11).ToString();
-            string critChance = ls.CritChance(s.LuckStat + s.LuckIncrease).ToString();
-            string critDamage = ls.CritDamage(s.DexterityStat + s.DexterityIncrease, 100).ToString();
-            string geoIncrease = (5 * (s.LuckStat + s.LuckIncrease - 1)).ToString();
-            string focusCost = ls.FocusCost(s.IntelligenceStat + s.IntelligenceIncrease).ToString();
-            string soulRegen = ls.SoulRegen(s.WisdomStat + s.WisdomIncrease).ToString();
-            string spellDamage = ls.SpellDamage(100, s.IntelligenceStat + s.IntelligenceIncrease).ToString();
+            string nailDamage = ls.NailDamage(s.StrengthStat + ls.StrengthIncrease).ToString();
+            string attackSpeed = ls.AttackSpeed(s.DexterityStat + ls.DexterityIncrease).ToString();
+            string extraMasks = ls.ExtraMasks(s.ResilienceStat + ls.ResilienceIncrease).ToString();
+            string extraSoul = ls.ExtraSoul(s.WisdomStat + ls.WisdomIncrease, 11).ToString();
+            string critChance = ls.CritChance(s.LuckStat + ls.LuckIncrease).ToString();
+            string critDamage = ls.CritDamage(s.DexterityStat + ls.DexterityIncrease, 100).ToString();
+            string geoIncrease = (5 * (s.LuckStat + ls.LuckIncrease)).ToString();
+            string focusCost = ls.FocusCost(s.IntelligenceStat + ls.IntelligenceIncrease).ToString();
+            string soulRegen = ls.SoulRegen(s.WisdomStat + ls.WisdomIncrease).ToString();
+            string spellDamage = ls.SpellDamage(100, s.IntelligenceStat + ls.IntelligenceIncrease).ToString();
 
-            string expectedHits = (s.ResilienceStat + s.ResilienceIncrease > 1)
-                ? ls.ExpectedHits(s.ResilienceStat + s.ResilienceIncrease).ToString()
+            string expectedHits = s.ResilienceStat + ls.ResilienceIncrease > 0
+                ? ls.ExpectedHits(s.ResilienceStat + ls.ResilienceIncrease).ToString()
                 : "0";
-
-            string geoToLevelUp = s.GeoToLvUp.ToString();
 
             // apply button label
             string applyText;
-            if (s.RL3Levels <= 0)
+            if (s.PendingRelicLevels > 0 && s.PendingGeo > 0)
             {
-                if (s.RL4Levels <= 0)
-                {
-                    applyText = s.SpentFreeLevels > 0
-                        ? $"Apply ({s.SpentGeo} geo and {s.SpentFreeLevels} relics)"
-                        : $"Apply ({s.SpentGeo} geo)";
-                }
-                else
-                {
-                    applyText = $"{s.RL4Levels} Free Levels!\n(Arcane Egg)";
-                }
+                applyText = $"Apply ({s.PendingGeo} geo and {s.PendingRelicLevels} relics)";
+            }
+            else if (s.PendingRelicLevels > 0)
+            {
+                applyText = $"Apply ({s.PendingRelicLevels} relic levels)";
+            }
+            else if (gotFreeLevel)
+            {
+                applyText = $"{availableRelicLevels} Free Levels available!";
             }
             else
             {
-                applyText = $"{s.RL3Levels} Free Levels!\n(King's Idol)";
+                applyText = $"Apply ({s.PendingGeo} geo)";
             }
 
             // layout
@@ -153,12 +157,12 @@ namespace Bonfire
             GUILayout.BeginHorizontal("box");
 
             GUILayout.BeginVertical("box");
-            DrawStatButton("Strength", totalStr, gotFreeLevel, s);
-            DrawStatButton("Dexterity", totalDex, gotFreeLevel, s);
-            DrawStatButton("Intelligence", totalInt, gotFreeLevel, s);
-            DrawStatButton("Resilience", totalRes, gotFreeLevel, s);
-            DrawStatButton("Wisdom", totalWsdm, gotFreeLevel, s);
-            DrawStatButton("Luck", totalLck, gotFreeLevel, s);
+            DrawStatButton("Strength", totalStr, gotFreeLevel, s, geoToLvlUp);
+            DrawStatButton("Dexterity", totalDex, gotFreeLevel, s, geoToLvlUp);
+            DrawStatButton("Intelligence", totalInt, gotFreeLevel, s, geoToLvlUp);
+            DrawStatButton("Resilience", totalRes, gotFreeLevel, s, geoToLvlUp);
+            DrawStatButton("Wisdom", totalWsdm, gotFreeLevel, s, geoToLvlUp);
+            DrawStatButton("Luck", totalLck, gotFreeLevel, s, geoToLvlUp);
             GUILayout.EndVertical();
 
             GUILayout.BeginVertical("box");
@@ -181,15 +185,14 @@ namespace Bonfire
 
             GUILayout.EndHorizontal();
 
-            GUILayout.Label(new GUIContent("Current Level: " + s.CurrentLv), labelStyle);
-            GUILayout.Label(new GUIContent("Geo to Level Up: " + geoToLevelUp), labelStyle);
+            GUILayout.Label("Current Level: " + currentLvl, labelStyle);
+            GUILayout.Label("Geo to Level Up: " + geoToLvlUp, labelStyle);
 
             // apply and cancel
             GUILayout.BeginHorizontal("box");
 
             GUI.backgroundColor = Color.green;
-            if (GUILayout.Button(new GUIContent(applyText), buttonStyle,
-                    GUILayout.Height(40f), GUILayout.Width(258f))
+            if (GUILayout.Button(applyText, buttonStyle, GUILayout.Height(40f), GUILayout.Width(258f))
                 && PlayerData.instance.atBench)
             {
                 LevellingSystem.Instance.ApplyLevel();
@@ -198,8 +201,7 @@ namespace Bonfire
             GUILayout.FlexibleSpace();
 
             GUI.backgroundColor = Color.white;
-            if (GUILayout.Button(new GUIContent("Cancel"), buttonStyle,
-                    GUILayout.Height(40f), GUILayout.Width(258f))
+            if (GUILayout.Button("Cancel", buttonStyle, GUILayout.Height(40f), GUILayout.Width(258f))
                 && PlayerData.instance.atBench)
             {
                 ResetPendingLevelUp();
@@ -213,10 +215,11 @@ namespace Bonfire
 
             GUI.backgroundColor = Color.red;
             if (GUILayout.Button(
-                    new GUIContent($"Respec ({s.Respec}  Rancid Egg)"),
+                    $"Respec ({s.RespecCost}  Rancid Egg)",
                     buttonStyle,
-                    GUILayout.Height(40f), GUILayout.Width(522f))
-                && PlayerData.instance.rancidEggs >= s.Respec
+                    GUILayout.Height(40f),
+                    GUILayout.Width(522f))
+                && PlayerData.instance.rancidEggs >= s.RespecCost
                 && PlayerData.instance.atBench)
             {
                 LevellingSystem.Instance.Respec();
@@ -262,17 +265,24 @@ namespace Bonfire
         // toggle button to enable/disable enemy HP bars
         private void DrawEnemyHPToggleUI()
         {
+            var s = BonfireRevamped.Instance.Status;
+
             GUILayout.BeginVertical("box");
 
             GUI.backgroundColor = Color.white;
-            BonfireRevamped.Instance.Status.EnemyHealthBarsEnabled =
-                GUILayout.Toggle(BonfireRevamped.Instance.Status.EnemyHealthBarsEnabled, "Enemy Health Bars");
+            s.EnemyHealthBarsEnabled = GUILayout.Toggle(s.EnemyHealthBarsEnabled, "Enemy Health Bars");
+
+            GUI.enabled = s.EnemyHealthBarsEnabled;
+            s.EnemyHpBarColorProgression = GUILayout.Toggle(
+                s.EnemyHpBarColorProgression,
+                "Toggle HP progression (green -> yellow -> red)");
+            GUI.enabled = true;
 
             GUILayout.EndVertical();
         }
 
         /// draws floating health bars above tracked enemies
-        public void DrawEnemyHealthBars()
+        private void DrawEnemyHealthBars()
         {
             if (!BonfireRevamped.Instance.Status.EnemyHealthBarsEnabled) return;
 
@@ -298,9 +308,11 @@ namespace Bonfire
 
                 DrawRect(new Rect(x, y, width, height), new Color(0f, 0f, 0f, 0.7f));
 
-                Color fillColor = isBoss ? new Color(1f, 0.5f, 0f) : Color.red;
-                // use this instead for progressive color based on HP percentage:
-                // pct > 0.6f ? Color.green : pct > 0.3f ? Color.yellow : Color.red
+                Color fillColor;
+                if (BonfireRevamped.Instance.Status.EnemyHpBarColorProgression)
+                    fillColor = pct > 0.6f ? Color.green : pct > 0.3f ? Color.yellow : Color.red;
+                else
+                    fillColor = isBoss ? new Color(1f, 0.5f, 0f) : Color.red;
 
                 DrawRect(new Rect(x, y, width * pct, height), fillColor);
 
@@ -309,47 +321,54 @@ namespace Bonfire
         }
 
         // helper functions
-        private void DrawStatButton(string statName, string displayValue, bool gotFreeLevel, PlayerStatus s)
+        private void DrawStatButton(string statName, string displayValue, bool gotFreeLevel, PlayerStatus s,
+                                    int geoToLvlUp)
         {
             if (GUILayout.Button(
-                    new GUIContent($"{statName}: {displayValue}"),
+                    $"{statName}: {displayValue}",
                     buttonStyle,
-                    GUILayout.Height(40f), GUILayout.Width(160f))
-                && CanLevelUp(gotFreeLevel) && PlayerData.instance.atBench)
+                    GUILayout.Height(40f),
+                    GUILayout.Width(160f))
+                && CanLevelUp(gotFreeLevel, geoToLvlUp)
+                && PlayerData.instance.atBench)
             {
-                LevellingSystem.Instance.IncreaseStat(statName, s);
+                LevellingSystem.Instance.IncreaseStat(statName, s, geoToLvlUp);
             }
         }
 
         private void DrawStatLabel(string text)
         {
-            GUILayout.Label(new GUIContent(text), labelStyle,
-                GUILayout.Height(40f), GUILayout.Width(160f));
+            GUILayout.Label(text, labelStyle, GUILayout.Height(40f), GUILayout.Width(160f));
         }
 
-        private bool CanLevelUp(bool gotFreeLevel)
+        private bool CanLevelUp(bool gotFreeLevel, int geoToLvlUp)
         {
             var s = BonfireRevamped.Instance.Status;
             return PlayerData.instance.atBench &&
-                   (gotFreeLevel || (s.GeoToLvUp + s.SpentGeo <= PlayerData.instance.geo));
+                   (gotFreeLevel || (geoToLvlUp + s.PendingGeo <= PlayerData.instance.geo));
         }
 
         // resets all pending (unapplied) stat allocations
         private void ResetPendingLevelUp()
         {
             var s = BonfireRevamped.Instance.Status;
-            s.SpentGeo = 0;
-            s.StrengthIncrease = 0;
-            s.DexterityIncrease = 0;
-            s.WisdomIncrease = 0;
-            s.ResilienceIncrease = 0;
-            s.IntelligenceIncrease = 0;
-            s.LuckIncrease = 0;
-            s.RL3Levels = PlayerData.instance.trinket3;
-            s.RL4Levels = PlayerData.instance.trinket4;
-            s.FreeLevels = s.RL3Levels + s.RL4Levels;
-            s.SpentFreeLevels = 0;
-            s.SpentGeoLevels = 0;
+            var ls = LevellingSystem.Instance;
+
+            ls.StrengthIncrease = 0;
+            ls.DexterityIncrease = 0;
+            ls.WisdomIncrease = 0;
+            ls.ResilienceIncrease = 0;
+            ls.IntelligenceIncrease = 0;
+            ls.LuckIncrease = 0;
+
+            s.PendingGeo = 0;
+            s.PendingGeoLevels = 0;
+            s.PendingRelicLevels = 0;
+
+            // reset relic values too. This way the relic snapshot in DrawBenchUI always
+            // re-reads from inventory the next time the player sits on a bench.
+            s.AvailableKingsIdols = 0;
+            s.AvailableArcaneEggs = 0;
         }
 
         private void EnsureFonts()
