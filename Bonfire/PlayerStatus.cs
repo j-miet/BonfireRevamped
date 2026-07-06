@@ -5,39 +5,30 @@ namespace Bonfire
     [Serializable]
     public class PlayerStatus
     {
-        public int StrengthStat = 1;
-        public int DexterityStat = 1;
-        public int IntelligenceStat = 1;
-        public int ResilienceStat = 1;
-        public int WisdomStat = 1;
-        public int LuckStat = 1;
-        public int StrengthIncrease = 0;
-        public int DexterityIncrease = 0;
-        public int IntelligenceIncrease = 0;
-        public int ResilienceIncrease = 0;
-        public int WisdomIncrease = 0;
-        public int LuckIncrease = 0;
+        public int StrengthStat = 0;
+        public int DexterityStat = 0;
+        public int IntelligenceStat = 0;
+        public int ResilienceStat = 0;
+        public int WisdomStat = 0;
+        public int LuckStat = 0;
 
-        public int GeoToLvUp = 0;
-        public int CurrentLv = 1;
-        public int SpentGeo = 0;
-        public int Respec = 1;
-        public int FreeLevels = 0;
-        public int GeoLevels = 0;
-        public int RL3Levels = 0; // available free levels from King's Idols
-        public int RL4Levels = 0; // available free levels from Arcane Eggs
-        public int TotalFreeLevels = 0;
-        public int RelicLevels = 0;
-        public int SpentFreeLevels = 0;
-        public int TotalGeoLevels = 1;
+        public int TotalGeoLevels = 1; // levelling starts from 1
         public int TotalSpentGeo = 0;
-        public int SpentGeoLevels = 0;
+        public int PendingGeoLevels = 0;
+        public int PendingGeo = 0;
+
+        public int RespecRelicLevels = 0; // available free levels earned back from respecs
+        public int PendingRelicLevels = 0;
+        public int AvailableKingsIdols = 0;
+        public int AvailableArcaneEggs = 0;
+        public int RespecCost = 1;
 
         public bool VoidHeartSoulRegenEnabled = false;
         public float VoidHeartSoulRegenMultiplier = 1f;
         public float VoidHeartSoulBuffer = 0f;
 
-        public bool EnemyHealthBarsEnabled = true;
+        public bool EnemyHealthBarsEnabled = false;
+        public bool EnemyHpBarColorProgression = false;
 
         public static PlayerStatus _instance;
     }
