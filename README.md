@@ -3,7 +3,7 @@
 This is a fork of [TheodoreChristianRadu's Bonfire](https://github.com/TheodoreChristianRadu/Bonfire) repository which itself 
 is a fork of [original BonfireMod by ricardosouzag](https://github.com/ricardosouzag/BonfireMod).
 
-## What is it
+## What is BonfireRevamped
 
 Original Bonfire mod adds a geo-based levelling system to Hollow Knight. This replicates the idea from Dark Souls games where 
 souls work both as currency and experience points for levelling character stats. 
@@ -20,7 +20,7 @@ Goal of this mod, named BonfireRevamped, is to
 
 ## Changes to original mod
 
-1. **Enemy Hp scaling has been removed entirely.**  
+- **Enemy Hp scaling has been removed entirely.**  
 Yup, there's scaling which itself is kinda counter-intuitive as it's 
 never explained anywhere. Scaling formula is also pretty bad as you can see below:
 
@@ -28,55 +28,39 @@ never explained anywhere. Scaling formula is also pretty bad as you can see belo
     hm.hp *= (int)((1.25 + (double)Dreamers / 3) * (2.5 / (1.0 + Math.Exp(-0.05 * Status.CurrentLv))));
     ```
 
+    The formula will always apply integer multiplier which means user would get sudden multiplier changes: no smooth curve, just 1x -> 2x -> 3x etc. Notice how hp also scales from both level ups and dreamers killed!
+
     This formula was applied to all enemies with less than 5000 hp which is actually just all enemies because nothing 
-    gets close to this value: for example HK wiki (https://hollowknight.wiki/) says 
+    gets close to this value, even on Ascended/Radiant difficulty in pantheons. For example the HK wiki (https://hollowknight.wiki/) says 
     - Absolute Radiance has 2181 hp (highest single entity)
-    - Sister of Battle on Radiant difficulty have 750+2 * 950 = 2650, but game loads them as separate entities so 
-    it's actually just the 750/950 values
+    - other multi-boss battles such as Sisters of Battle and Watcher Knights have more in total, but each entity gets checked separately
 
-    Following table shows how Knight's level and the amount of dreamers killed affected enemy hp multiplier:
-
-    |  |0 killed  | 1 killed | 2 killed | 3 killed |
-    |---|:-:|:-:|:-:|:-:|
-    | 2x | 12 | 1  | 1  | 1 |
-    | 3x | 64 | 23 | 11 | 3 | 
-    | 4x | -  | -  | 33 | 19 |
-    | 5x | -  | -  | -  | 44 |
-
-    How to read this:
-    - pick the column based on how many dreamers have been killed
-    - then pick the equal or next lowest level value on that column e.g. 1 killed, your level is 20 -> 20 is less 
-    than 23 -> pick the row above it
-    - then look at the multiplier corresponding to that row on the left-most column. 
-    In this case it's the first row which means 2x hp
-
-    As you can see it was very harsh and increments would get applied suddenly:
-    - levelling up from level 11 -> 12 even with 0 dreamers causes enemies hp to double
-    - with all 3 dreamers killed and just hitting level 3 is already a 3x multiplier. And as you probably kept still 
-    levelling, you'd have a whopping 4x multiplier on late/end game bosses after reaching lvl 19 (and possibly the final 5x after reaching lvl 44)
-
-2. **Bench bonfire visuals have been removed** because in my personal opinion they didn't fit the aesthetic of 
+- **Bench bonfire visuals have been removed** because in my personal opinion they didn't fit the aesthetic of 
 Hollow Knight
 
-3. **All spells have now intelligence stat scaling**. Previously only howling wraiths/abyss shriek had the bonus 
+- **All spells have now intelligence stat scaling**. Previously only howling wraiths/abyss shriek had the bonus 
 damage applied.
 
-4. **All nail arts get the 50% damage bonus from Fragile/Unbreakable Strength charm**.
+- **All nail arts now also get the 50% damage bonus from Fragile/Unbreakable Strength charms**.
 
-5. **Extended bench menu to include toggle buttons** for
+- **Extended bench menu to include toggle buttons** for
     - simple enemy health bars
-        - attached to each enemy individually
-        - for enemies: only displayed if enemy is damaged (= not full hp), has red color
-        - for bosses: always displayed, has orange color, larger than normal bar
+        - attached to each enemy individually, hovering over them
+        - for enemies: only displayed if enemy is damaged (= not full hp), has red color. For bosses: always displayed, has orange color, larger than normal bar
+        - can also toggle progressive bar colors (green -> yellow -> red). Then both bosses and enemies use this same color system.
     - void heart soul regen (regen multiplier can be adjusted)
         - only applies to void heart -> you need to have obtained this charm
         - use this at your own discretion: for balanced gameplay keep it at a low 
         multiplier or disable entirely because you already have wisdom stat for base regen
 
-6. **Other changes**
+- **Other changes**
 
     Gameplay:
     - ui menu now opens only when sitting on a bench (previously just being next to it was enough)
+    - respec system no longer refunds the King's Idols/Arcane Eggs as King's Idols. Instead it now keeps internal
+    counter of all free level-ups from relics. So stat respecs works just the same except you can no longer convert the
+    free level-ups back to sellable relics
+    - all stats now start from 0 instead of 1. This makes it easier for player to see how many points they've allocated: 0 indeed means 0 added points in stat. It also simplifies codebase logic if any stat changes/adjustments are needed in the future.
 
     Code:
     - removed unused code like public fields and some LevellingSystem functions
@@ -84,8 +68,7 @@ damage applied.
     - combined some code e.g. BonfireRevamped.HeroUpdate handles soul regen and crit rolls without creating 
     separate hooks
     - moved all GUI menu logic into a separate BonfireGUI.cs file
-    - update readability: code is longer/more verbose, but also formatted better and includes a lot of comments for 
-    explanations
+    - update readability: code is longer/more verbose, but also formatted better and includes plenty of comments
 
 
 ## Installation
@@ -105,12 +88,12 @@ This mod is not part of Lumafly mod manager so you need to perform manual instal
 
     `C:/Program Files (x86)/Steam/steamapps/common/Hollow Knight/hollow_knight_Data/Managed/Mods/BonfireRevamped`
 
-**If you use modding API:** launch the game and mod should be enabled  
-**If you use Lumafly:** you will find *BonfireRevamped* in installed mods (it should say Version not from modlinks). 
+**If you use just modding API:** launch the game and mod should be enabled  
+**If you use Lumafly:** you will find *BonfireRevamped* in installed mods (it should say "Version not from modlinks"). 
 Just enable it and launch modded game
 
 **If you use mods such as Enemy HP Bar and Better Void Heart, or anything else with custom hp bars and/or void heart 
 soul regen:** 
 - remove such mods, or 
-- use them but keep BonfireRevamped's own implementations toggled off to avoid conflicts
+- use them, but keep BonfireRevamped's own implementations toggled off to avoid conflicts
 
