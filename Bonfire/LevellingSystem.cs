@@ -6,62 +6,66 @@ namespace Bonfire
 {
     public class LevellingSystem : MonoBehaviour
     {
-        public static LevellingSystem _instance;
-        public PlayerData PlayerData;
-
-        public LevellingSystem() { }
+        public int StrengthIncrease = 0;
+        public int DexterityIncrease = 0;
+        public int IntelligenceIncrease = 0;
+        public int ResilienceIncrease = 0;
+        public int WisdomIncrease = 0;
+        public int LuckIncrease = 0;
 
         public static LevellingSystem Instance
         {
-            get
-            {
-                if (_instance == null)
-                    _instance = new LevellingSystem();
-                return _instance;
-            }
-            set => _instance = value;
+            get => _instance;
+            private set => _instance = value;
         }
 
-        // delegate GUI rendering to BonfireGUI.OnGUI
-        public void OnGUI() => BonfireGUI.Instance?.OnGUI();
+        private void Awake()
+        {
+            _instance = this;
+        }
 
-        // all stat formulas
+        // stat formulas
 
-        // nail damage based on strength stat
+        // strength: nail damage
         public int NailDamage(int totalStr) =>
-            (int)Math.Round((5 + 4 * PlayerData.instance.nailSmithUpgrades) * Math.Pow(1.25, Math.Log(totalStr, 2.0)));
+            (int)Math.Round(
+                    (5 + 4 * PlayerData.instance.nailSmithUpgrades) * Math.Pow(1.25, Math.Log(totalStr + 1, 2.0)));
 
-        // extra masks based on resilience stat
-        public int ExtraMasks(int totalRes) => (int)Math.Round(-0.4 + 2.6 * Math.Log(totalRes));
+        // nail arts use slightly different formula
+        public int NailArtDamage(int baseDamage, int totalStr) =>
+            (int)Math.Round(baseDamage * Math.Pow(1.25, Math.Log(totalStr + 1, 2.0)));
 
-        // focus cost based on intelligence stat
-        public float FocusCost(int totalInt) => (float)Math.Round(34.0 * Math.Exp(-0.01 * (totalInt + 1.0)));
-
-        // crit chance based on luck stat
-        public int CritChance(int totalLck) => (int)Math.Round(6.5 * Math.Log(totalLck));
-
-        // nail attack speed based on dexterity stat
+        // dexterity: nail attack speed
         public float AttackSpeed(int totalDex) =>
-            (float)Math.Round(2.7 / (1.0 + 1.82 * Math.Exp(-0.08 * totalDex)) - 0.01, 2);
+            (float)Math.Round(2.7 / (1.0 + 1.82 * Math.Exp(-0.08 * (totalDex + 1))) - 0.01, 2);
 
-        // geo drop multiplier from enemies based on luck stat (5% per stat level)
-        public int IncreaseGeo(int droppedGeo, int totalLck) => (int)(droppedGeo * (1f + (totalLck - 1) / 20f));
+        // dexterity: nail crit damage
+        public int CritDamage(int totalDex, int nailDamage) => (int)(nailDamage * (1.2 + Math.Log(totalDex + 1)));
 
-        // nail crit damage based on dexterity stat
-        public int CritDamage(int totalDex, int nailDamage) => (int)(nailDamage * (1.2 + Math.Log(totalDex)));
-
-        // spell damage based on intelligence stat
+        // intelligence: spell damage
         public int SpellDamage(int baseDamage, int totalInt) =>
-            (int)Math.Round(baseDamage * Math.Pow(1.25, Math.Log(totalInt, 2.0)));
+            (int)Math.Round(baseDamage * Math.Pow(1.25, Math.Log(totalInt + 1, 2.0)));
 
-        // extra soul gained with nail strikes based on wisdom stat
-        public int ExtraSoul(int totalWsdm, int baseSoul) => (int)Math.Round(baseSoul + 5.0 * Math.Log(totalWsdm));
+        // intelligence: focus cost
+        public float FocusCost(int totalInt) => (float)Math.Round(34.0 * Math.Exp(-0.01 * (totalInt + 2.0)));
 
-        // passive soul regen based on wisdom stat
-        public int SoulRegen(int totalWsdm) => (int)Math.Round(0.32 + 0.68 * Math.Log(totalWsdm));
+        // resilience: extra lifeblood masks
+        public int ExtraMasks(int totalRes) => (int)Math.Round(-0.4 + 2.6 * Math.Log(totalRes + 1));
 
-        // immunity frames based on resilience stat
-        public float IFrames(int totalRes) => (float)(3.25 / (1.0 + 2.4 * Math.Exp(-0.07 * (totalRes - 1))));
+        // resilience: immunity frames
+        public float IFrames(int totalRes) => (float)(3.25 / (1.0 + 2.4 * Math.Exp(-0.07 * totalRes)));
+
+        // wisdom: extra soul gained on nail strikes
+        public int ExtraSoul(int totalWsdm, int baseSoul) => (int)Math.Round(baseSoul + 5.0 * Math.Log(totalWsdm + 1));
+
+        // wisdom: passive soul regen
+        public int SoulRegen(int totalWsdm) => (int)Math.Round(0.32 + 0.68 * Math.Log(totalWsdm + 1));
+
+        // luck: crit chance
+        public int CritChance(int totalLck) => (int)Math.Round(6.5 * Math.Log(totalLck + 1));
+
+        // luck: geo drop multiplier from enemies (5% per stat level)
+        public int IncreaseGeo(int droppedGeo, int totalLck) => (int)(droppedGeo * (1f + totalLck / 20f));
 
         // calculates dodge chance percentage (used by BonfireGUI for preview label)
         public float ExpectedHits(int totalRes)
@@ -75,124 +79,140 @@ namespace Bonfire
         /// <summary>
         /// Increments the pending allocation for a single stat.
         /// </summary>
-        public void IncreaseStat(string stat, PlayerStatus s)
+        public void IncreaseStat(string stat, PlayerStatus s, int geoToLvlUp)
         {
-            if (stat == "Strength") s.StrengthIncrease++;
-            else if (stat == "Dexterity") s.DexterityIncrease++;
-            else if (stat == "Intelligence") s.IntelligenceIncrease++;
-            else if (stat == "Resilience") s.ResilienceIncrease++;
-            else if (stat == "Wisdom") s.WisdomIncrease++;
-            else s.LuckIncrease++;
+            if (stat == "Strength") StrengthIncrease++;
+            else if (stat == "Dexterity") DexterityIncrease++;
+            else if (stat == "Intelligence") IntelligenceIncrease++;
+            else if (stat == "Resilience") ResilienceIncrease++;
+            else if (stat == "Wisdom") WisdomIncrease++;
+            else LuckIncrease++;
 
-            if (s.RL3Levels <= 0)
+            int availableRelicLevels = s.AvailableKingsIdols + s.AvailableArcaneEggs
+                         + s.RespecRelicLevels - s.PendingRelicLevels;
+
+            if (availableRelicLevels > 0)
             {
-                if (s.RL4Levels <= 0)
+                if (s.RespecRelicLevels - s.PendingRelicLevels > 0)
                 {
-                    s.SpentGeo += s.GeoToLvUp;
-                    s.SpentGeoLevels++;
+                    // use respec pool first, no item to deduct
                 }
-                else
-                {
-                    s.RL4Levels--;
-                    s.SpentFreeLevels++;
-                }
+                else if (s.AvailableKingsIdols > 0) s.AvailableKingsIdols--;
+                else if (s.AvailableArcaneEggs > 0) s.AvailableArcaneEggs--;
+
+                s.PendingRelicLevels++;
             }
             else
             {
-                s.RL3Levels--;
-                s.SpentFreeLevels++;
+                s.PendingGeo += geoToLvlUp;
+                s.PendingGeoLevels++;
             }
         }
 
         /// <summary>
-        /// Commits the pending stat allocations, deducting geo and relics.
+        /// Commits the pending stat allocations, deducting geo and relics + relic levels
         /// </summary>
         public void ApplyLevel()
         {
             var s = BonfireRevamped.Instance.Status;
 
-            PlayerData.instance.TakeGeo(s.SpentGeo);
-            PlayerData.instance.trinket3 = s.RL3Levels;
-            PlayerData.instance.trinket4 = s.RL4Levels;
-            HeroController.instance.geoCounter.TakeGeo(s.SpentGeo);
+            int idolsSpent = PlayerData.instance.trinket3 - s.AvailableKingsIdols;
+            int eggsSpent = PlayerData.instance.trinket4 - s.AvailableArcaneEggs;
+            PlayerData.instance.trinket3 -= idolsSpent;
+            PlayerData.instance.trinket4 -= eggsSpent;
 
-            s.TotalSpentGeo += s.SpentGeo;
-            s.SpentGeo = 0;
+            int respecLevelsConsumed = s.PendingRelicLevels - (idolsSpent + eggsSpent);
+            s.RespecRelicLevels -= respecLevelsConsumed;
 
-            s.TotalGeoLevels += s.SpentGeoLevels;
-            s.SpentGeoLevels = 0;
+            s.PendingRelicLevels = 0;
+            s.AvailableKingsIdols = 0;
+            s.AvailableArcaneEggs = 0;
 
-            s.TotalFreeLevels += s.SpentFreeLevels;
-            s.SpentFreeLevels = 0;
+            PlayerData.instance.TakeGeo(s.PendingGeo);
+            HeroController.instance.geoCounter.TakeGeo(s.PendingGeo);
+            s.TotalSpentGeo += s.PendingGeo;
+            s.PendingGeo = 0;
 
-            s.StrengthStat += s.StrengthIncrease;
-            s.DexterityStat += s.DexterityIncrease;
-            s.ResilienceStat += s.ResilienceIncrease;
-            s.WisdomStat += s.WisdomIncrease;
-            s.IntelligenceStat += s.IntelligenceIncrease;
-            s.LuckStat += s.LuckIncrease;
+            s.TotalGeoLevels += s.PendingGeoLevels;
+            s.PendingGeoLevels = 0;
 
-            HeroController.instance.CharmUpdate();
-            PlayerData.instance.UpdateBlueHealth();
-            PlayMakerFSM.BroadcastEvent("UPDATE BLUE HEALTH");
+            s.StrengthStat += StrengthIncrease;
+            s.DexterityStat += DexterityIncrease;
+            s.ResilienceStat += ResilienceIncrease;
+            s.WisdomStat += WisdomIncrease;
+            s.IntelligenceStat += IntelligenceIncrease;
+            s.LuckStat += LuckIncrease;
 
             BonfireRevamped.Instance.Log(
                 "Level up applied: "
-                + s.StrengthIncrease + " Strength, "
-                + s.DexterityIncrease + " Dexterity, "
-                + s.IntelligenceIncrease + " Intelligence, "
-                + s.ResilienceIncrease + " Resilience, "
-                + s.WisdomIncrease + " Wisdom and "
-                + s.LuckIncrease + " Luck."
+                + StrengthIncrease + " Strength, "
+                + DexterityIncrease + " Dexterity, "
+                + IntelligenceIncrease + " Intelligence, "
+                + ResilienceIncrease + " Resilience, "
+                + WisdomIncrease + " Wisdom and "
+                + LuckIncrease + " Luck."
             );
 
-            s.StrengthIncrease = 0;
-            s.DexterityIncrease = 0;
-            s.WisdomIncrease = 0;
-            s.ResilienceIncrease = 0;
-            s.IntelligenceIncrease = 0;
-            s.LuckIncrease = 0;
+            StrengthIncrease = 0;
+            DexterityIncrease = 0;
+            ResilienceIncrease = 0;
+            WisdomIncrease = 0;
+            IntelligenceIncrease = 0;
+            LuckIncrease = 0;
 
-            PlayerData.UpdateBlueHealth();
+            HeroController.instance.CharmUpdate();
+            PlayMakerFSM.BroadcastEvent("UPDATE BLUE HEALTH");
         }
 
         /// <summary>
-        /// Refunds all spent levels and resets stats to 1, consuming one Rancid Egg.
+        /// Refunds all spent levels and resets stats to 1, consuming rancid eggs.
         /// </summary>
         public void Respec()
         {
             var s = BonfireRevamped.Instance.Status;
+            int relicLevelsSpent = s.StrengthStat + s.DexterityStat + s.IntelligenceStat
+                                 + s.ResilienceStat + s.WisdomStat + s.LuckStat
+                                 - (s.TotalGeoLevels - 1);
+
+            if (s.TotalGeoLevels == 1 && relicLevelsSpent == 0) return;
+
+            // reset to 0 first so repeated respecs don't accumulate previously-refunded levels
+            s.RespecRelicLevels = 0;
+            s.RespecRelicLevels += relicLevelsSpent;
 
             PlayerData.instance.AddGeo(s.TotalSpentGeo);
             HeroController.instance.AddGeoToCounter(s.TotalSpentGeo);
             s.TotalSpentGeo = 0;
-
-            PlayerData.instance.trinket3 += s.TotalFreeLevels;
-            PlayMakerFSM.BroadcastEvent("TRINK 3");
-
-            s.StrengthStat = 1; s.DexterityStat = 1;
-            s.ResilienceStat = 1; s.WisdomStat = 1;
-            s.IntelligenceStat = 1; s.LuckStat = 1;
-
-            s.StrengthIncrease = 0; s.DexterityIncrease = 0;
-            s.IntelligenceIncrease = 0; s.ResilienceIncrease = 0;
-            s.WisdomIncrease = 0; s.LuckIncrease = 0;
-
-            s.SpentGeo = 0;
-            s.FreeLevels = 0;
-            s.TotalFreeLevels = 0;
-            s.RL3Levels = 0;
-            s.GeoLevels = 0;
             s.TotalGeoLevels = 1;
-            s.SpentGeoLevels = 0;
-            s.RelicLevels = 0;
-            s.CurrentLv = 1;
 
-            PlayerData.instance.rancidEggs -= s.Respec;
-            s.Respec += 1;
+            s.StrengthStat = 0;
+            s.DexterityStat = 0;
+            s.ResilienceStat = 0;
+            s.WisdomStat = 0;
+            s.IntelligenceStat = 0;
+            s.LuckStat = 0;
 
-            PlayerData.UpdateBlueHealth();
+            StrengthIncrease = 0;
+            DexterityIncrease = 0;
+            IntelligenceIncrease = 0;
+            ResilienceIncrease = 0;
+            WisdomIncrease = 0;
+            LuckIncrease = 0;
+
+            s.PendingGeo = 0;
+            s.PendingGeoLevels = 0;
+            s.PendingRelicLevels = 0;
+            s.AvailableKingsIdols = 0;
+            s.AvailableArcaneEggs = 0;
+
+            PlayerData.instance.rancidEggs -= s.RespecCost;
+            s.RespecCost++;
+
+            HeroController.instance.CharmUpdate();
+            PlayMakerFSM.BroadcastEvent("UPDATE BLUE HEALTH");
         }
+
+        private static LevellingSystem _instance;
 
         // helper for ExpectedHits
         private float IFramesChance(int totalRes, int hitsTaken)
