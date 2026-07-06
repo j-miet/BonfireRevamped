@@ -11,10 +11,11 @@ namespace Bonfire
     public class BonfireRevamped : Mod, ILocalSettings<PlayerStatus>
     {
         public PlayerStatus Status = new PlayerStatus();
+
         public void OnLoadLocal(PlayerStatus s) => Status = s;
         public PlayerStatus OnSaveLocal() => Status;
+        public override string GetVersion() => "1.2.0";
 
-        public override string GetVersion() => "1.1.0";
         public int HitsSinceShielded { get; set; } = 0;
         public bool Crit { get; set; } = false;
 
@@ -25,13 +26,12 @@ namespace Bonfire
         public override void Initialize()
         {
             Instance = this;
-            Instance.LogDebug("Bonfire Mod initializing!");
+            Instance.LogDebug("BonfireRevamped initializing");
 
             ModHooks.NewGameHook += SetupGameRefs;
             ModHooks.SavegameLoadHook += SetupGameRefs;
             ModHooks.CharmUpdateHook += BenchApply;
             ModHooks.SoulGainHook += SoulGain;
-            On.PlayerData.UpdateBlueHealth += UpdateBlueHealth;
             ModHooks.FocusCostHook += FocusCost;
             ModHooks.SlashHitHook += CritHit;
             ModHooks.CursorHook += ShowCursor;
@@ -39,14 +39,15 @@ namespace Bonfire
             ModHooks.AfterTakeDamageHook += ResShield;
             ModHooks.HeroUpdateHook += HeroUpdate;
             ModHooks.OnEnableEnemyHook += OnEnableEnemy;
+
+            On.PlayerData.UpdateBlueHealth += UpdateBlueHealth;
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
 
-            Instance.LogDebug("BonfireRevamped v." + GetVersion() + " initialized!");
+            Instance.LogDebug("BonfireRevamped v." + GetVersion() + " initialized");
         }
 
-        private int Dreamers; // can remove this + SceneLoaded unless some other dreamer-reliant system gets added
         private int critRoll;
-        private float manaRegenTime;
+        private float soulRegenTime;
         private LevellingSystem ls;
 
         // inject levelling system and GUI into game
@@ -66,21 +67,9 @@ namespace Bonfire
         }
 
         // calls SetupGameRefs after each scene transition
-        // ORIGINAL FUNCTION was to apply dreamer kill status which was then used for scaling enemy hp based on amount
-        // of dreamers killed. This has been disabled.
         private void SceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
             SetupGameRefs();
-
-            /*
-            if (pd == null && PlayerData.instance != null)
-                pd = PlayerData.instance;
-
-            Dreamers = 0;
-            if (pd.lurienDefeated) Dreamers++;
-            if (pd.hegemolDefeated) Dreamers++;
-            if (pd.monomonDefeated) Dreamers++;
-            */
         }
 
         // add health bars for enemies and scale their geo drops by luck stat
@@ -123,7 +112,7 @@ namespace Bonfire
         // handles damage blocking from resiliency stat
         private int ResShield(int hazardType, int damage)
         {
-            if (Status.ResilienceStat > 1 && hazardType == 1)
+            if (Status.ResilienceStat > 0 && hazardType == 1)
             {
                 if (HitsSinceShielded > 7)
                     HitsSinceShielded = 7;
@@ -135,27 +124,13 @@ namespace Bonfire
                 // apply weight multiplier based on how many hits taken since last blocked hit
                 switch (HitsSinceShielded)
                 {
-                    case 1:
-                        multiplier = 10f;
-                        break;
-                    case 2:
-                        multiplier = 20f;
-                        break;
-                    case 3:
-                        multiplier = 30f;
-                        break;
-                    case 4:
-                        multiplier = 50f;
-                        break;
-                    case 5:
-                        multiplier = 70f;
-                        break;
-                    case 6:
-                        multiplier = 80f;
-                        break;
-                    case 7:
-                        multiplier = 90f;
-                        break;
+                    case 1: multiplier = 10f; break;
+                    case 2: multiplier = 20f; break;
+                    case 3: multiplier = 30f; break;
+                    case 4: multiplier = 50f; break;
+                    case 5: multiplier = 70f; break;
+                    case 6: multiplier = 80f; break;
+                    case 7: multiplier = 90f; break;
                 }
 
                 LogDebug($"{num} <= {multiplier} * {iframes}");
@@ -194,11 +169,10 @@ namespace Bonfire
         }
 
         // lifeblood scaling based on resiliency stat
-        private int BlueHPRestored() => ls.ExtraMasks(Status.ResilienceStat);
         private void UpdateBlueHealth(On.PlayerData.orig_UpdateBlueHealth orig, PlayerData self)
         {
             orig(self);
-            self.SetInt("healthBlue", self.GetInt("healthBlue") + BlueHPRestored());
+            self.SetInt("healthBlue", self.GetInt("healthBlue") + ls.ExtraMasks(Status.ResilienceStat));
         }
 
         // helper for geo value updates. Uses lookup via reflection
@@ -214,21 +188,26 @@ namespace Bonfire
         {
             if (Crit && otherCollider.gameObject.layer == 11)
             {
-                HeroController.instance.shadowRingPrefab.transform.SetScaleX(0.5f);
-                HeroController.instance.shadowRingPrefab.transform.SetScaleY(0.5f);
+                var prefab = HeroController.instance.shadowRingPrefab;
+                prefab.transform.SetScaleX(0.5f);
+                prefab.transform.SetScaleY(0.5f);
 
                 Object.Instantiate(
-                    HeroController.instance.shadowRingPrefab,
+                    prefab,
                     otherCollider.gameObject.transform.position,
                     go.transform.rotation
                 );
+
+                Crit = false;
             }
         }
 
         // checks if player has obtained the void heart
         private bool HasVoidHeart()
         {
-            return PlayerData.instance != null && PlayerData.instance.GetBool("equippedCharm_36");
+            return PlayerData.instance != null
+                && PlayerData.instance.GetBool("equippedCharm_36")
+                && PlayerData.instance.gotShadeCharm;
         }
 
         // called when the hero (player character) is updated each frame
@@ -260,15 +239,20 @@ namespace Bonfire
             {
                 float dt = Time.deltaTime;
 
-                if (manaRegenTime > 0)
+                if (soulRegenTime > 0)
                 {
-                    manaRegenTime -= dt;
+                    soulRegenTime -= dt;
                 }
                 else
                 {
-                    LogDebug("Recovering MP!");
-                    manaRegenTime = 1.11f;
-                    HeroController.instance.AddMPChargeSpa(ls.SoulRegen(Status.WisdomStat));
+                    soulRegenTime = 1.11f;
+
+                    int regenAmount = ls.SoulRegen(Status.WisdomStat);
+                    if (regenAmount > 0)
+                    {
+                        LogDebug("Recovering MP!");
+                        HeroController.instance.AddMPChargeSpa(regenAmount);
+                    }
                 }
 
                 if (Status.VoidHeartSoulRegenEnabled && HasVoidHeart())
@@ -290,25 +274,13 @@ namespace Bonfire
         // custom damage function
         private HitInstance SetDamages(Fsm owner, HitInstance hit)
         {
-            bool isSpell;
+            string sourceName = hit.Source.name;
 
-            switch (hit.Source.name)
-            {
-                case "Fireball":        // Vengeful Spirit / Shade Soul
-                case "Fireball(Clone)": // not sure what this refers to exactly (maybe this is actually Shade Soul?)
-                case "Q Fall Damage":   // Desolate Dive / Descending Dark, direct hit
-                case "Hit L":           // dive, left side
-                case "Hit R":           // dive, right side
-                case "Hit U":           // Howling Wraiths / Abyss Shriek
-                    isSpell = true;
-                    break;
-                default:
-                    isSpell = false;
-                    break;
-            }
+            // hit.AttackType: 0 = nail, 2 = spells
+            LogDebug("Attack type : " + hit.AttackType);
 
             // spell damage scaling based on intelligence stat
-            if (isSpell)
+            if ((int)hit.AttackType == 2)
             {
                 LogDebug($"[Vanilla] Spell: {hit.Source.name}. Damage: {hit.DamageDealt}");
 
@@ -317,17 +289,21 @@ namespace Bonfire
                 LogDebug($"[Bonfire] Spell: {hit.Source.name}. Damage: {hit.DamageDealt}");
             }
 
-            // nail arts scaling based on strength stat
-            if (hit.Source.name.Contains("lash"))
+            // nail hits + nail arts damage scaling based on strength stat
+            if (hit.AttackType == 0)
             {
                 LogDebug($"[Vanilla] Damage for {hit.Source.name} = {hit.DamageDealt}");
 
-                hit.DamageDealt = ls.NailDamage(Status.StrengthStat);
+                if (sourceName == "Slash" || sourceName == "DownSlash" || sourceName == "UpSlash")
+                    hit.DamageDealt = ls.NailDamage(Status.StrengthStat); // nail hits
+                else
+                    hit.DamageDealt = ls.NailArtDamage(hit.DamageDealt, Status.StrengthStat); // nail arts
 
-                // apply Fragile/Unbreakable Strength damage bonus to nail arts
+                // apply Fragile/Unbreakable Strength 50% damage bonus properly (now also applied to nail arts)
                 if (PlayerData.instance.equippedCharm_25)
-                    hit.DamageDealt = (int)(hit.DamageDealt * 1.5f);
+                    hit.DamageDealt = (int)System.Math.Round(hit.DamageDealt * 1.5f);
 
+                // this will display lower damages for basic nail hits if Strength charm is equipped
                 LogDebug($"[Bonfire] Damage for {hit.Source.name} = {hit.DamageDealt}");
                 LogDebug($"Crit chance: {ls.CritChance(Status.LuckStat)}. Rolled {critRoll}.");
 
@@ -338,7 +314,6 @@ namespace Bonfire
                     LogDebug($"[Crit] Damage for {hit.Source.name} = {hit.DamageDealt}");
 
                     HeroController.instance.GetComponent<SpriteFlash>().FlashGrimmflame();
-                    HeroController.instance.carefreeShield.SetActive(true);
                 }
             }
 
