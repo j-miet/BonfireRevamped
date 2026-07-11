@@ -19,21 +19,12 @@ namespace Bonfire
             private set => _instance = value;
         }
 
-        private void Awake()
-        {
-            _instance = this;
-        }
-
         // stat formulas
 
         // strength: nail damage
         public int NailDamage(int totalStr) =>
             (int)Math.Round(
                     (5 + 4 * PlayerData.instance.nailSmithUpgrades) * Math.Pow(1.25, Math.Log(totalStr + 1, 2.0)));
-
-        // nail arts use slightly different formula
-        public int NailArtDamage(int baseDamage, int totalStr) =>
-            (int)Math.Round(baseDamage * Math.Pow(1.25, Math.Log(totalStr + 1, 2.0)));
 
         // dexterity: nail attack speed
         public float AttackSpeed(int totalDex) =>
@@ -52,8 +43,8 @@ namespace Bonfire
         // resilience: extra lifeblood masks
         public int ExtraMasks(int totalRes) => (int)Math.Round(-0.4 + 2.6 * Math.Log(totalRes + 1));
 
-        // resilience: immunity frames
-        public float IFrames(int totalRes) => (float)(3.25 / (1.0 + 2.4 * Math.Exp(-0.07 * totalRes)));
+        // resilience: chance to block an enemy hit
+        public float BlockChance(int totalRes) => (float)(0.72 / (1.0 + 12.0 * Math.Exp(-0.09 * totalRes)));
 
         // wisdom: extra soul gained on nail strikes
         public int ExtraSoul(int totalWsdm, int baseSoul) => (int)Math.Round(baseSoul + 5.0 * Math.Log(totalWsdm + 1));
@@ -66,15 +57,6 @@ namespace Bonfire
 
         // luck: geo drop multiplier from enemies (5% per stat level)
         public int IncreaseGeo(int droppedGeo, int totalLck) => (int)(droppedGeo * (1f + totalLck / 20f));
-
-        // calculates dodge chance percentage (used by BonfireGUI for preview label)
-        public float ExpectedHits(int totalRes)
-        {
-            float num = 0f;
-            for (int i = 1; i < 8; i++)
-                num += (i + 1) * IFramesChance(totalRes, i);
-            return (float)Math.Round(100f / num);
-        }
 
         /// <summary>
         /// Increments the pending allocation for a single stat.
@@ -212,44 +194,25 @@ namespace Bonfire
             PlayMakerFSM.BroadcastEvent("UPDATE BLUE HEALTH");
         }
 
+        /// <summary>
+        /// Returns average damage blocking chance from current resiliency stat value
+        /// </summary>
+        public float AverageBlockChance(int totalRes)
+        {
+            float f = BlockChance(totalRes);
+            float[] multipliers = { 10f, 20f, 30f, 50f, 70f, 80f, 90f };
+            float sum = 0f;
+            foreach (var m in multipliers)
+                sum += m * f;
+            return sum / multipliers.Length;
+        }
+
+
         private static LevellingSystem _instance;
 
-        // helper for ExpectedHits
-        private float IFramesChance(int totalRes, int hitsTaken)
+        private void Awake()
         {
-            if (hitsTaken > 7) hitsTaken = 7;
-
-            float f = IFrames(totalRes);
-            switch (hitsTaken)
-            {
-                case 1:
-                    return 0.1f * f;
-                case 2:
-                    return (1f - 0.1f * f) * 0.2f * f;
-                case 3:
-                    return (1f - 0.1f * f) * (1f - 0.2f * f) * 0.3f * f;
-                case 4:
-                    return (1f - 0.1f * f) * (1f - 0.2f * f) * (1f - 0.3f * f) * 0.5f * f;
-                case 5:
-                    return (1f - 0.1f * f) * (1f - 0.2f * f) * (1f - 0.3f * f) * (1f - 0.5f * f) * 0.7f * f;
-                case 6:
-                    return (1f - 0.1f * f)
-                    * (1f - 0.2f * f)
-                    * (1f - 0.3f * f)
-                    * (1f - 0.5f * f)
-                    * (1f - 0.7f * f)
-                    * 0.8f * f;
-                case 7:
-                    return (1f - 0.1f * f)
-                    * (1f - 0.2f * f)
-                    * (1f - 0.3f * f)
-                    * (1f - 0.5f * f)
-                    * (1f - 0.7f * f)
-                    * (1f - 0.8f * f)
-                    * 0.9f * f;
-                default:
-                    return 0f;
-            }
+            _instance = this;
         }
     }
 }

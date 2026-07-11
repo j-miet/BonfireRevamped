@@ -46,6 +46,7 @@ namespace Bonfire
             Instance.LogDebug("BonfireRevamped v." + GetVersion() + " initialized");
         }
 
+
         private int critRoll;
         private float soulRegenTime;
         private LevellingSystem ls;
@@ -118,7 +119,7 @@ namespace Bonfire
                     HitsSinceShielded = 7;
 
                 float num = Random.Range(1, 100);
-                float iframes = ls.IFrames(Status.ResilienceStat);
+                float blockChance = ls.BlockChance(Status.ResilienceStat);
                 float multiplier = 0f;
 
                 // apply weight multiplier based on how many hits taken since last blocked hit
@@ -133,8 +134,8 @@ namespace Bonfire
                     case 7: multiplier = 90f; break;
                 }
 
-                LogDebug($"{num} <= {multiplier} * {iframes}");
-                if (multiplier > 0 && num <= multiplier * iframes)
+                LogDebug($"Range value {num} <= {multiplier} * {blockChance}");
+                if (multiplier > 0 && num <= multiplier * blockChance)
                 {
                     HitsSinceShielded = 0;
                     HeroController.instance.carefreeShield.SetActive(true);
@@ -294,16 +295,26 @@ namespace Bonfire
             {
                 LogDebug($"[Vanilla] Damage for {hit.Source.name} = {hit.DamageDealt}");
 
+                hit.DamageDealt = ls.NailDamage(Status.StrengthStat);
+
                 if (sourceName == "Slash" || sourceName == "DownSlash" || sourceName == "UpSlash")
-                    hit.DamageDealt = ls.NailDamage(Status.StrengthStat); // nail hits
+                {
+                    // nails hits, already handled with NailDamage
+                }
+                else if (sourceName == "Great Slash" || sourceName == "Dash Slash")
+                    hit.DamageDealt = (int)System.Math.Round(2.5 * hit.DamageDealt);
                 else
-                    hit.DamageDealt = ls.NailArtDamage(hit.DamageDealt, Status.StrengthStat); // nail arts
+                {
+                    // cyclone slash
+                    // other nails arts have clear names "Great Slash" and "Dash Slash". For some reason cyclone slash
+                    // doesn't so it's put after checking base nail and these two other nail arts
+                    hit.DamageDealt = (int)System.Math.Round(1.25 * hit.DamageDealt);
+                }
 
                 // apply Fragile/Unbreakable Strength 50% damage bonus properly (now also applied to nail arts)
                 if (PlayerData.instance.equippedCharm_25)
                     hit.DamageDealt = (int)System.Math.Round(hit.DamageDealt * 1.5f);
 
-                // this will display lower damages for basic nail hits if Strength charm is equipped
                 LogDebug($"[Bonfire] Damage for {hit.Source.name} = {hit.DamageDealt}");
                 LogDebug($"Crit chance: {ls.CritChance(Status.LuckStat)}. Rolled {critRoll}.");
 
@@ -311,6 +322,7 @@ namespace Bonfire
                 if (Crit)
                 {
                     hit.DamageDealt = ls.CritDamage(Status.DexterityStat, hit.DamageDealt);
+
                     LogDebug($"[Crit] Damage for {hit.Source.name} = {hit.DamageDealt}");
 
                     HeroController.instance.GetComponent<SpriteFlash>().FlashGrimmflame();
