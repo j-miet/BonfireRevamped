@@ -45,7 +45,8 @@ Hollow Knight
 - **All spells have now intelligence stat scaling**. Previously only howling wraiths/abyss shriek had the bonus 
 damage applied.
 
-- **All nail arts now also get the 50% damage bonus from Fragile/Unbreakable Strength charms**.
+- **All nail arts now scale from strength stat and also get the 50% damage bonus from Fragile/Unbreakable 
+Strength charms**.
 
 - **Extended bench menu to include toggle buttons** for
     - simple enemy health bars
@@ -112,15 +113,15 @@ soul regen:
 - remove such mods/disable them, or 
 - use them, but keep BonfireRevamped's own implementations toggled off to avoid conflicts
 
-#### BonfireTeleport (by *kassent*)
+#### Bonfire Teleport (by *kassent*)
 
-
-> Despite its naming: BonfireTeleport is an entirely separate mod project from Bonfire leveling system mod, 
+> Despite its name: Bonfire Teleport is an entirely separate mod project from Bonfire leveling system mods, 
 > made by different author.
 
-If you'd like to keep the Dark Souls theme of warping between bonfires, install the **BonfireTeleport**. This mod 
+If you'd like to keep the Dark Souls theme of warping between bonfires, install the **Bonfire Teleport**. This mod 
 allows you to effortlessly fast travel from bench to bench by using map pins (or just teleport freely teleport to 
 anywhere if that's what you want instead).
 
-BonfireTeleport https://www.nexusmods.com/hollowknight/mods/129?tab=description
+Bonfire Teleport in NexusMods: https://www.nexusmods.com/hollowknight/mods/129?tab=description
+- make sure you download the HK modding API compatible version (not BepInEx)
 
