@@ -14,6 +14,11 @@ end game: improve character power instead of saving up and spending it on unbrea
 
 While levelling certainly makes game easier, it can offer some refreshing variety to standard gameplay.
 
+Goal of *BonfireRevamped* is to
+1. slightly improve the original mod by adding some quality of life changes and update existing systems 
+(but not too much to keep the same feel)
+2. update the project's codebase to be easier to approach and update
+
 
 ## Changes to original mod
 
@@ -78,7 +83,7 @@ damage applied.
 ## Installation
 
 *Mod is only compatible with Hollow Knight 1.5.78.11833 because modding API is not available yet for the newest 
-public version.* 
+public version* 
 
 **BonfireRevamped mod is not part of Lumafly mod manager (at least yet)** so you need to perform manual installation:
 - Install modding api either
