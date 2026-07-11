@@ -46,6 +46,7 @@ namespace Bonfire
                 ResetPendingLevelUp();
         }
 
+
         // fonts & styles
         private Font trajanBold;
         private Font trajanNormal;
@@ -126,8 +127,8 @@ namespace Bonfire
             string soulRegen = ls.SoulRegen(s.WisdomStat + ls.WisdomIncrease).ToString();
             string spellDamage = ls.SpellDamage(100, s.IntelligenceStat + ls.IntelligenceIncrease).ToString();
 
-            string expectedHits = s.ResilienceStat + ls.ResilienceIncrease > 0
-                ? ls.ExpectedHits(s.ResilienceStat + ls.ResilienceIncrease).ToString()
+            string blockChance = s.ResilienceStat + ls.ResilienceIncrease > 0
+                ? ls.AverageBlockChance(s.ResilienceStat + ls.ResilienceIncrease).ToString("F0")
                 : "0";
 
             // apply button label
@@ -178,7 +179,7 @@ namespace Bonfire
             DrawStatLabel("");   // spacer to align with column 1
             DrawStatLabel("Crit Damage: " + critDamage + "%");
             DrawStatLabel("Focus Cost: " + focusCost);
-            DrawStatLabel("Hit Resistance: " + expectedHits + "%");
+            DrawStatLabel("Block Chance: " + blockChance + "%");
             DrawStatLabel("SOUL Regen: " + soulRegen);
             DrawStatLabel("Geo Increase: " + geoIncrease + "%");
             GUILayout.EndVertical();
@@ -215,7 +216,7 @@ namespace Bonfire
 
             GUI.backgroundColor = Color.red;
             if (GUILayout.Button(
-                    $"Respec ({s.RespecCost}  Rancid Egg)",
+                    $"Respec ({s.RespecCost} " + $"{(s.RespecCost > 1 ? "Rancid Eggs" : "Rancid Egg")})",
                     buttonStyle,
                     GUILayout.Height(40f),
                     GUILayout.Width(522f))
