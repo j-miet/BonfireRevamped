@@ -43,8 +43,9 @@ namespace Bonfire
         // resilience: extra lifeblood masks
         public int ExtraMasks(int totalRes) => (int)Math.Round(-0.4 + 2.6 * Math.Log(totalRes + 1));
 
-        // resilience: chance to block an enemy hit
-        public float BlockChance(int totalRes) => (float)(0.72 / (1.0 + 12.0 * Math.Exp(-0.09 * totalRes)));
+        // resilience: chance to block an enemy hit. 
+        // This is the raw value: AverageBlockChance gives the practical average
+        public float BlockChance(int totalRes) => (float)(0.9 / (1.0 + 8.0 * Math.Exp(-0.09 * totalRes)));
 
         // wisdom: extra soul gained on nail strikes
         public int ExtraSoul(int totalWsdm, int baseSoul) => (int)Math.Round(baseSoul + 5.0 * Math.Log(totalWsdm + 1));
