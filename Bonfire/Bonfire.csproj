@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>BonfireRevamped</AssemblyName>
-    <RootNamespace>BonfireRevamped</RootNamespace>
+    <AssemblyName>BonfireRelit</AssemblyName>
+    <RootNamespace>BonfireRelit</RootNamespace>
     <TargetFramework>net481</TargetFramework>
     <OutputType>Library</OutputType>
     <Nullable>disable</Nullable>

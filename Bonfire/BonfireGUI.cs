@@ -5,7 +5,7 @@ using GlobalEnums;
 using HutongGames.PlayMaker;
 using UnityEngine;
 
-namespace Bonfire
+namespace BonfireRelit
 {
     public class BonfireGUI : MonoBehaviour
     {
@@ -86,7 +86,7 @@ namespace Bonfire
         /// </summary>
         private void DrawBenchUI()
         {
-            var s = BonfireRevamped.Instance.Status;
+            var s = BonfireRelit.Instance.Status;
             var ls = LevellingSystem.Instance;
 
             if (s.PendingRelicLevels == 0 && s.PendingGeoLevels == 0)
@@ -240,7 +240,7 @@ namespace Bonfire
         // ui panel for Void Heart soul regen controls
         private void DrawVoidHeartSettingsUI()
         {
-            var s = BonfireRevamped.Instance.Status;
+            var s = BonfireRelit.Instance.Status;
 
             GUILayout.BeginVertical("box");
             GUILayout.Label("Void Heart Soul Regen");
@@ -266,7 +266,7 @@ namespace Bonfire
         // toggle button to enable/disable enemy HP bars
         private void DrawEnemyHPToggleUI()
         {
-            var s = BonfireRevamped.Instance.Status;
+            var s = BonfireRelit.Instance.Status;
 
             GUILayout.BeginVertical("box");
 
@@ -285,7 +285,7 @@ namespace Bonfire
         /// draws floating health bars above tracked enemies
         private void DrawEnemyHealthBars()
         {
-            if (!BonfireRevamped.Instance.Status.EnemyHealthBarsEnabled) return;
+            if (!BonfireRelit.Instance.Status.EnemyHealthBarsEnabled) return;
 
             foreach (var kvp in EnemyMaxHp)
             {
@@ -310,7 +310,7 @@ namespace Bonfire
                 DrawRect(new Rect(x, y, width, height), new Color(0f, 0f, 0f, 0.7f));
 
                 Color fillColor;
-                if (BonfireRevamped.Instance.Status.EnemyHpBarColorProgression)
+                if (BonfireRelit.Instance.Status.EnemyHpBarColorProgression)
                     fillColor = pct > 0.6f ? Color.green : pct > 0.3f ? Color.yellow : Color.red;
                 else
                     fillColor = isBoss ? new Color(1f, 0.5f, 0f) : Color.red;
@@ -344,7 +344,7 @@ namespace Bonfire
 
         private bool CanLevelUp(bool gotFreeLevel, int geoToLvlUp)
         {
-            var s = BonfireRevamped.Instance.Status;
+            var s = BonfireRelit.Instance.Status;
             return PlayerData.instance.atBench &&
                    (gotFreeLevel || (geoToLvlUp + s.PendingGeo <= PlayerData.instance.geo));
         }
@@ -352,7 +352,7 @@ namespace Bonfire
         // resets all pending (unapplied) stat allocations
         private void ResetPendingLevelUp()
         {
-            var s = BonfireRevamped.Instance.Status;
+            var s = BonfireRelit.Instance.Status;
             var ls = LevellingSystem.Instance;
 
             ls.StrengthIncrease = 0;

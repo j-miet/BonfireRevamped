@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Bonfire
+namespace BonfireRelit
 {
     [Serializable]
     public class PlayerStatus

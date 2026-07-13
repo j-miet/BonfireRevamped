@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Bonfire
+namespace BonfireRelit
 {
     public class LevellingSystem : MonoBehaviour
     {
@@ -97,7 +97,7 @@ namespace Bonfire
         /// </summary>
         public void ApplyLevel()
         {
-            var s = BonfireRevamped.Instance.Status;
+            var s = BonfireRelit.Instance.Status;
 
             int idolsSpent = PlayerData.instance.trinket3 - s.AvailableKingsIdols;
             int eggsSpent = PlayerData.instance.trinket4 - s.AvailableArcaneEggs;
@@ -126,7 +126,7 @@ namespace Bonfire
             s.IntelligenceStat += IntelligenceIncrease;
             s.LuckStat += LuckIncrease;
 
-            BonfireRevamped.Instance.Log(
+            BonfireRelit.Instance.Log(
                 "Level up applied: "
                 + StrengthIncrease + " Strength, "
                 + DexterityIncrease + " Dexterity, "
@@ -152,7 +152,7 @@ namespace Bonfire
         /// </summary>
         public void Respec()
         {
-            var s = BonfireRevamped.Instance.Status;
+            var s = BonfireRelit.Instance.Status;
             int relicLevelsSpent = s.StrengthStat + s.DexterityStat + s.IntelligenceStat
                                  + s.ResilienceStat + s.WisdomStat + s.LuckStat
                                  - (s.TotalGeoLevels - 1);

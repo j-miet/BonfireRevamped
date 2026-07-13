@@ -6,27 +6,27 @@ using Modding;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Bonfire
+namespace BonfireRelit
 {
-    public class BonfireRevamped : Mod, ILocalSettings<PlayerStatus>
+    public class BonfireRelit : Mod, ILocalSettings<PlayerStatus>
     {
         public PlayerStatus Status = new PlayerStatus();
 
         public void OnLoadLocal(PlayerStatus s) => Status = s;
         public PlayerStatus OnSaveLocal() => Status;
-        public override string GetVersion() => "1.2.0";
+        public override string GetVersion() => "1.3.0";
 
         public int HitsSinceShielded { get; set; } = 0;
         public bool Crit { get; set; } = false;
 
-        public static BonfireRevamped Instance;
+        public static BonfireRelit Instance;
         public static GameManager gm;
         public static PlayerData pd;
 
         public override void Initialize()
         {
             Instance = this;
-            Instance.LogDebug("BonfireRevamped initializing");
+            Instance.LogDebug("BonfireRelit initializing");
 
             ModHooks.NewGameHook += SetupGameRefs;
             ModHooks.SavegameLoadHook += SetupGameRefs;
@@ -43,7 +43,7 @@ namespace Bonfire
             On.PlayerData.UpdateBlueHealth += UpdateBlueHealth;
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
 
-            Instance.LogDebug("BonfireRevamped v." + GetVersion() + " initialized");
+            Instance.LogDebug("BonfireRelit v." + GetVersion() + " initialized");
         }
 
 
